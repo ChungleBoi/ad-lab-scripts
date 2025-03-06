@@ -22,9 +22,9 @@ param(
     [string]$DomainAdminUser = "Administrator",
     [string]$DomainAdminPass = "SecretPassword123",
 
-    # ====== LOCAL ADMIN CREDENTIALS (REQUIRED FOR RENAMING) ======
-    [string]$LocalAdminUser = "Administrator",   # Local Admin Username
-    [string]$LocalAdminPass = "LocalAdminPassword123",  # Local Admin Password
+    # ====== LOCAL ADMIN CREDENTIALS (REQUIRED FOR RENAMING COMPUTER) ======
+    [string]$LocalAdminUser = "LocalUser",   # Local Admin Username
+    [string]$LocalAdminPass = "password123!!",  # Local Admin Password
 
     # ====== DOMAIN CONTROLLER HOSTNAME ======
     [string]$DCName          = "dc01.ad.lab",
