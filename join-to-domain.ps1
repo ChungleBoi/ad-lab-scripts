@@ -1,8 +1,10 @@
 <#
-  Automated Domain Join Script - Fully Fixed
+  Automated Domain Join Script - Fully Updated
   - Uses a local admin credential for renaming.
   - Ensures the script runs with administrator privileges.
   - Fixes the Rename-Computer issue by running it with local credentials.
+  - Moves the computer to the correct OU if specified.
+  - WAIT for user confirmation before rebooting.
 #>
 
 [CmdletBinding()]
@@ -22,15 +24,15 @@ param(
     [string]$DomainAdminUser = "Administrator",
     [string]$DomainAdminPass = "SecretPassword123",
 
-    # ====== LOCAL ADMIN CREDENTIALS (REQUIRED FOR RENAMING COMPUTER) ======
+    # ====== LOCAL ADMIN CREDENTIALS (REQUIRED FOR RENAMING) ======
     [string]$LocalAdminUser = "LocalUser",   # Local Admin Username
     [string]$LocalAdminPass = "password123!!",  # Local Admin Password
 
     # ====== DOMAIN CONTROLLER HOSTNAME ======
     [string]$DCName          = "dc01.ad.lab",
 
-    # ====== TARGET OU DN ======
-    [string]$TargetOU        = "OU=MyComputers,DC=AD,DC=LAB"
+    # ====== TARGET OU DN (OPTIONAL) ======
+    [string]$TargetOU        = "OU=DisableSMBSigning+DisableDefender+EnableICMP_Policy,DC=AD,DC=LAB"  # Example: "OU=DisableSMBSigning+DisableDefender+EnableICMP_Policy,DC=AD,DC=LAB"
 )
 
 ### 1) Ensure Script is Running as Administrator
@@ -107,9 +109,7 @@ try {
     }
     else {
         Start-Process -FilePath "powershell.exe" -Credential $LocalCred -ArgumentList "-Command Rename-Computer -NewName $ComputerName -Force" -NoNewWindow -Wait
-        Write-Host "Computer renamed successfully. A reboot is required."
-        Restart-Computer -Force
-        exit 0  # Ensures script stops and runs again after reboot
+        Write-Host "Computer renamed successfully."
     }
 }
 catch {
@@ -128,37 +128,40 @@ catch {
     exit 1
 }
 
-### 7) Move Computer Object to Correct OU
-Write-Host "`n==> Moving computer object to '$TargetOU' via '$DCName'..."
-try {
-    Invoke-Command -ComputerName $DCName -Credential $Cred -ScriptBlock {
-        param($ComputerToMove, $OUPath)
+### 7) Move Computer Object to Correct OU (If Specified)
+if (-not [string]::IsNullOrWhiteSpace($TargetOU)) {
+    Write-Host "`n==> Moving computer object to '$TargetOU' via '$DCName'..."
+    try {
+        Invoke-Command -ComputerName $DCName -Credential $Cred -ScriptBlock {
+            param($ComputerToMove, $OUPath)
 
-        Import-Module ActiveDirectory -ErrorAction Stop
+            Import-Module ActiveDirectory -ErrorAction Stop
 
-        # Attempt to find by the desired name first
-        $comp = Get-ADComputer -Identity $ComputerToMove -ErrorAction SilentlyContinue
-        if (-not $comp) {
-            $fallback = $env:COMPUTERNAME
-            Write-Host "Not found: '$ComputerToMove'; trying '$fallback'..."
-            $comp = Get-ADComputer -Identity $fallback -ErrorAction Stop
-        }
+            # Validate that the OU exists
+            $OU = Get-ADOrganizationalUnit -Filter "DistinguishedName -eq '$OUPath'" -ErrorAction Stop
+            if (-not $OU) {
+                Write-Host "ERROR: Specified OU '$OUPath' does not exist. Computer will remain in default location."
+                exit 1
+            }
 
-        Move-ADObject -Identity $comp.DistinguishedName -TargetPath $OUPath -ErrorAction Stop
-        Write-Host "Successfully moved '$($comp.Name)' to OU: $OUPath"
-    } -ArgumentList $ComputerName, $TargetOU -ErrorAction Stop
-}
-catch {
-    Write-Host "ERROR moving AD object: $($_.Exception.Message)"
-    exit 1
+            # Ensure the computer object exists in AD
+            $comp = Get-ADComputer -Filter { Name -eq $ComputerToMove } -ErrorAction SilentlyContinue
+            if (-not $comp) {
+                Write-Host "ERROR: Computer object '$ComputerToMove' not found in AD. Check AD replication."
+                exit 1
+            }
+
+            Move-ADObject -Identity $comp.DistinguishedName -TargetPath $OUPath -ErrorAction Stop
+            Write-Host "Successfully moved '$ComputerToMove' to OU: $OUPath"
+        } -ArgumentList $ComputerName, $TargetOU -ErrorAction Stop
+    }
+    catch {
+        Write-Host "ERROR moving AD object: $($_.Exception.Message)"
+        exit 1
+    }
 }
 
-### 8) Final Reboot
-Write-Host "`n==> Rebooting now to complete domain membership..."
-try {
-    Restart-Computer -Force
-}
-catch {
-    Write-Host "ERROR rebooting: $($_.Exception.Message)"
-    exit 1
-}
+### 8) Wait for User Confirmation Before Reboot
+Write-Host "`n==> Press ENTER to reboot and complete domain membership..."
+Read-Host
+Restart-Computer -Force
