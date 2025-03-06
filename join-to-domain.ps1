@@ -1,5 +1,6 @@
 <#
   Automated Domain Join Script - Updated with Rename Checkpoint
+  - Properly escapes the plus sign in the OU name (e.g., 'DisableDefender\+EnableICMP_Policy').
   - If the computer is already named $ComputerName, it skips renaming.
   - Otherwise, it renames first via local admin credentials.
   - Then configures network, contacts the DC, joins the domain.
@@ -32,7 +33,8 @@ param(
     [string]$DCName          = "dc01.ad.lab",
 
     # ====== TARGET OU DN (OPTIONAL) ======
-    [string]$TargetOU        = "OU=DisableDefender+EnableICMP_Policy,DC=AD,DC=LAB"
+    # NOTE: The plus sign is backslash-escaped below.
+    [string]$TargetOU        = "OU=DisableDefender\+EnableICMP_Policy,DC=AD,DC=LAB"
 )
 
 ### 1) Ensure Script is Running as Administrator
@@ -140,7 +142,8 @@ if (-not [string]::IsNullOrWhiteSpace($TargetOU)) {
 
             Import-Module ActiveDirectory -ErrorAction Stop
 
-            # Validate that the OU exists
+            # Validate that the OU exists (escaping any special chars, like plus signs, in the actual DN)
+            # The backslash is already in $OUPath if needed, so we can directly reference it:
             $OU = Get-ADOrganizationalUnit -Filter "DistinguishedName -eq '$OUPath'" -ErrorAction Stop
             if (-not $OU) {
                 Write-Host "ERROR: Specified OU '$OUPath' does not exist. Computer will remain in default location."
