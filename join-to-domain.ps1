@@ -1,10 +1,10 @@
 <#
-  Automated Domain Join Script - Fully Updated
-  - Uses a local admin credential for renaming.
-  - Ensures the script runs with administrator privileges.
-  - Fixes the Rename-Computer issue by running it with local credentials.
-  - Moves the computer to the correct OU if specified.
-  - WAIT for user confirmation before rebooting.
+  Automated Domain Join Script - Updated with Rename Checkpoint
+  - If the computer is already named $ComputerName, it skips renaming.
+  - Otherwise, it renames first via local admin credentials.
+  - Then configures network, contacts the DC, joins the domain.
+  - Moves the computer to the specified OU (optional).
+  - Waits for user confirmation before rebooting.
 #>
 
 [CmdletBinding()]
@@ -25,19 +25,19 @@ param(
     [string]$DomainAdminPass = "SecretPassword123",
 
     # ====== LOCAL ADMIN CREDENTIALS (REQUIRED FOR RENAMING) ======
-    [string]$LocalAdminUser = "LocalUser",   # Local Admin Username
-    [string]$LocalAdminPass = "password123!!",  # Local Admin Password
+    [string]$LocalAdminUser  = "LocalUser",
+    [string]$LocalAdminPass  = "password123!!",
 
     # ====== DOMAIN CONTROLLER HOSTNAME ======
     [string]$DCName          = "dc01.ad.lab",
 
     # ====== TARGET OU DN (OPTIONAL) ======
-    [string]$TargetOU        = "OU=DisableSMBSigning+DisableDefender+EnableICMP_Policy,DC=AD,DC=LAB"  # Example: "OU=DisableSMBSigning+DisableDefender+EnableICMP_Policy,DC=AD,DC=LAB"
+    [string]$TargetOU        = "OU=DisableDefender+EnableICMP_Policy,DC=AD,DC=LAB"
 )
 
 ### 1) Ensure Script is Running as Administrator
 $CurrentUser = [Security.Principal.WindowsIdentity]::GetCurrent()
-$AdminRole = [Security.Principal.WindowsPrincipal]::new($CurrentUser)
+$AdminRole   = [Security.Principal.WindowsPrincipal]::new($CurrentUser)
 if (-not $AdminRole.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
     Write-Host "ERROR: This script must be run as Administrator. Right-click PowerShell and choose 'Run as Administrator'."
     exit 1
@@ -46,20 +46,39 @@ if (-not $AdminRole.IsInRole([Security.Principal.WindowsBuiltInRole]::Administra
 ### 2) Build Credential Objects
 Write-Host "`n==> Creating Credential Objects..."
 $FullDomainUser = "$DomainName\$DomainAdminUser"
-$SecurePass = ConvertTo-SecureString $DomainAdminPass -AsPlainText -Force
-$Cred = New-Object System.Management.Automation.PSCredential($FullDomainUser, $SecurePass)
+$SecurePass     = ConvertTo-SecureString $DomainAdminPass -AsPlainText -Force
+$Cred           = New-Object System.Management.Automation.PSCredential($FullDomainUser, $SecurePass)
 
 $LocalSecurePass = ConvertTo-SecureString $LocalAdminPass -AsPlainText -Force
-$LocalCred = New-Object System.Management.Automation.PSCredential($LocalAdminUser, $LocalSecurePass)
+$LocalCred       = New-Object System.Management.Automation.PSCredential($LocalAdminUser, $LocalSecurePass)
 
-### 3) Remove Existing IP and Set Static IP
+### 3) Rename the Computer (Checkpoint: Skip if name already matches)
+Write-Host "`n==> Checking if computer name is already '$ComputerName'..."
+if ($env:COMPUTERNAME -eq $ComputerName) {
+    Write-Host "Skipping rename - It's already '$ComputerName'."
+}
+else {
+    Write-Host "Renaming computer to '$ComputerName' using local admin credentials..."
+    try {
+        Rename-Computer -NewName $ComputerName -LocalCredential $LocalCred -Force
+        Write-Host "Computer renamed. (Will fully take effect after reboot.)"
+    }
+    catch {
+        Write-Host "ERROR renaming computer: $($_.Exception.Message)"
+        exit 1
+    }
+}
+
+### 4) Configure Network Settings
 Write-Host "`n==> Configuring network settings for '$InterfaceName'..."
 try {
     Set-NetIPInterface -InterfaceAlias $InterfaceName -DHCP Disabled -ErrorAction SilentlyContinue
-    Get-NetIPAddress -InterfaceAlias $InterfaceName -AddressFamily IPv4 -ErrorAction SilentlyContinue | 
+    
+    Get-NetIPAddress -InterfaceAlias $InterfaceName -AddressFamily IPv4 -ErrorAction SilentlyContinue |
         Remove-NetIPAddress -Confirm:$false -ErrorAction SilentlyContinue
-    Get-NetRoute -InterfaceAlias $InterfaceName -ErrorAction SilentlyContinue | 
-        Where-Object { $_.DestinationPrefix -eq "0.0.0.0/0" } | 
+    
+    Get-NetRoute -InterfaceAlias $InterfaceName -ErrorAction SilentlyContinue |
+        Where-Object { $_.DestinationPrefix -eq "0.0.0.0/0" } |
         Remove-NetRoute -Confirm:$false -ErrorAction SilentlyContinue
 }
 catch {
@@ -73,6 +92,7 @@ try {
                      -PrefixLength $PrefixLength `
                      -DefaultGateway $DefaultGateway `
                      -ErrorAction Stop
+
     Set-DnsClientServerAddress -InterfaceAlias $InterfaceName -ServerAddresses $DNSServer -ErrorAction Stop
 }
 catch {
@@ -80,10 +100,10 @@ catch {
     exit 1
 }
 
-### 4) Ensure Network is Stabilized
 Write-Host "`n==> Waiting for network to stabilize..."
 Start-Sleep -Seconds 5
 
+### 5) Connectivity Checks
 Write-Host "`n==> Checking connectivity to Domain Controller '$DCName'..."
 if (-not (Test-Connection -ComputerName $DCName -Count 2 -Quiet)) {
     Write-Host "ERROR: Cannot reach domain controller '$DCName'. Check network settings."
@@ -100,37 +120,20 @@ catch {
     exit 1
 }
 
-### 5) Rename Computer Using Local Admin Account
-Write-Host "`n==> Renaming computer to '$ComputerName'..."
+### 6) Join the Domain Using the *New* Name
+Write-Host "`n==> Joining Domain '$DomainName' using '$FullDomainUser' with name '$ComputerName'..."
 try {
-    $CurrentName = $env:COMPUTERNAME
-    if ($CurrentName -eq $ComputerName) {
-        Write-Host "Skipping rename - It's already '$ComputerName'."
-    }
-    else {
-        Start-Process -FilePath "powershell.exe" -Credential $LocalCred -ArgumentList "-Command Rename-Computer -NewName $ComputerName -Force" -NoNewWindow -Wait
-        Write-Host "Computer renamed successfully."
-    }
-}
-catch {
-    Write-Host "ERROR renaming computer: $($_.Exception.Message)"
-    exit 1
-}
-
-### 6) Join Domain (Runs After Reboot)
-Write-Host "`n==> Joining Domain '$DomainName' using '$FullDomainUser'..."
-try {
-    Add-Computer -DomainName $DomainName -Credential $Cred -Force -ErrorAction Stop
-    Write-Host "Domain join succeeded."
+    Add-Computer -DomainName $DomainName -Credential $Cred -NewName $ComputerName -Force -ErrorAction Stop
+    Write-Host "Domain join succeeded (pending reboot)."
 }
 catch {
     Write-Host "ERROR joining domain: $($_.Exception.Message)"
     exit 1
 }
 
-### 7) Move Computer Object to Correct OU (If Specified)
+### 7) Move Computer Object to Target OU (If Specified)
 if (-not [string]::IsNullOrWhiteSpace($TargetOU)) {
-    Write-Host "`n==> Moving computer object to '$TargetOU' via '$DCName'..."
+    Write-Host "`n==> Attempting to move computer object '$ComputerName' to '$TargetOU'..."
     try {
         Invoke-Command -ComputerName $DCName -Credential $Cred -ScriptBlock {
             param($ComputerToMove, $OUPath)
@@ -144,7 +147,7 @@ if (-not [string]::IsNullOrWhiteSpace($TargetOU)) {
                 exit 1
             }
 
-            # Ensure the computer object exists in AD
+            # Ensure the computer object exists in AD (using the new name)
             $comp = Get-ADComputer -Filter { Name -eq $ComputerToMove } -ErrorAction SilentlyContinue
             if (-not $comp) {
                 Write-Host "ERROR: Computer object '$ComputerToMove' not found in AD. Check AD replication."
@@ -161,7 +164,7 @@ if (-not [string]::IsNullOrWhiteSpace($TargetOU)) {
     }
 }
 
-### 8) Wait for User Confirmation Before Reboot
+### 8) Final Prompt & Reboot
 Write-Host "`n==> Press ENTER to reboot and complete domain membership..."
 Read-Host
 Restart-Computer -Force
