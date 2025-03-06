@@ -1,121 +1,160 @@
 <#
-  1. Save on the WORKSTATION you want to join.
-  2. Edit the variables to match your environment.
-  3. Run in an elevated PowerShell prompt on the workstation.
+  Automated Domain Join Script - Fully Fixed
+  - Uses a local admin credential for renaming.
+  - Ensures the script runs with administrator privileges.
+  - Fixes the Rename-Computer issue by running it with local credentials.
 #>
 
 [CmdletBinding()]
 param(
     # ====== NETWORK SETTINGS ======
     [string]$InterfaceName   = "Ethernet0",
-    [string]$NewIPAddress    = "10.10.14.2",
-    [int]$PrefixLength       = 24,                  # 24 => 255.255.255.0
+    [string]$NewIPAddress    = "10.10.14.3",
+    [int]$PrefixLength       = 24,
     [string]$DefaultGateway  = "10.10.14.1",
     [string]$DNSServer       = "10.10.14.1",
 
     # ====== DOMAIN INFO ======
     [string]$DomainName      = "AD.LAB",
-    [string]$ComputerName    = "FILES02",
+    [string]$ComputerName    = "FILES03",
 
-    # ====== CREDENTIALS ======
-    [string]$DomainAdminUser = "AD\\Administrator",    # e.g. "AD.LAB\\Administrator"
-    [string]$DomainAdminPass = "SecretPassword123",    # Replace with real password
+    # ====== DOMAIN CREDENTIALS ======
+    [string]$DomainAdminUser = "Administrator",
+    [string]$DomainAdminPass = "SecretPassword123",
+
+    # ====== LOCAL ADMIN CREDENTIALS (REQUIRED FOR RENAMING) ======
+    [string]$LocalAdminUser = "Administrator",   # Local Admin Username
+    [string]$LocalAdminPass = "LocalAdminPassword123",  # Local Admin Password
 
     # ====== DOMAIN CONTROLLER HOSTNAME ======
-    [string]$DCName          = "dc01.ad.lab",          # Must match DNS name of your DC
+    [string]$DCName          = "dc01.ad.lab",
 
     # ====== TARGET OU DN ======
     [string]$TargetOU        = "OU=MyComputers,DC=AD,DC=LAB"
 )
 
-### 1) Build the credential object (non-interactive, no prompt)
-$SecurePass = ConvertTo-SecureString $DomainAdminPass -AsPlainText -Force
-$Cred       = New-Object System.Management.Automation.PSCredential($DomainAdminUser, $SecurePass)
+### 1) Ensure Script is Running as Administrator
+$CurrentUser = [Security.Principal.WindowsIdentity]::GetCurrent()
+$AdminRole = [Security.Principal.WindowsPrincipal]::new($CurrentUser)
+if (-not $AdminRole.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
+    Write-Host "ERROR: This script must be run as Administrator. Right-click PowerShell and choose 'Run as Administrator'."
+    exit 1
+}
 
-Write-Host "`n[1/6] Disabling DHCP and removing any existing IPv4 addresses/routes on '$InterfaceName'..."
+### 2) Build Credential Objects
+Write-Host "`n==> Creating Credential Objects..."
+$FullDomainUser = "$DomainName\$DomainAdminUser"
+$SecurePass = ConvertTo-SecureString $DomainAdminPass -AsPlainText -Force
+$Cred = New-Object System.Management.Automation.PSCredential($FullDomainUser, $SecurePass)
+
+$LocalSecurePass = ConvertTo-SecureString $LocalAdminPass -AsPlainText -Force
+$LocalCred = New-Object System.Management.Automation.PSCredential($LocalAdminUser, $LocalSecurePass)
+
+### 3) Remove Existing IP and Set Static IP
+Write-Host "`n==> Configuring network settings for '$InterfaceName'..."
 try {
     Set-NetIPInterface -InterfaceAlias $InterfaceName -DHCP Disabled -ErrorAction SilentlyContinue
-
-    # Remove all IPv4 addresses
-    Get-NetIPAddress -InterfaceAlias $InterfaceName -AddressFamily IPv4 -ErrorAction SilentlyContinue |
+    Get-NetIPAddress -InterfaceAlias $InterfaceName -AddressFamily IPv4 -ErrorAction SilentlyContinue | 
         Remove-NetIPAddress -Confirm:$false -ErrorAction SilentlyContinue
-
-    # Remove default routes (0.0.0.0/0) on this interface
-    Get-NetRoute -InterfaceAlias $InterfaceName -ErrorAction SilentlyContinue |
-        Where-Object { $_.DestinationPrefix -eq '0.0.0.0/0' } |
+    Get-NetRoute -InterfaceAlias $InterfaceName -ErrorAction SilentlyContinue | 
+        Where-Object { $_.DestinationPrefix -eq "0.0.0.0/0" } | 
         Remove-NetRoute -Confirm:$false -ErrorAction SilentlyContinue
 }
 catch {
-    Write-Host "WARNING: An error occurred cleaning interface config: $($_.Exception.Message)"
+    Write-Host "WARNING: Failed to reset network settings: $($_.Exception.Message)"
 }
 
-Write-Host "`n[2/6] Assigning new IP $NewIPAddress/$PrefixLength, Gateway $DefaultGateway on '$InterfaceName'..."
+Write-Host "`n==> Assigning Static IP: $NewIPAddress, Gateway: $DefaultGateway, DNS: $DNSServer..."
 try {
     New-NetIPAddress -InterfaceAlias $InterfaceName `
                      -IPAddress $NewIPAddress `
                      -PrefixLength $PrefixLength `
                      -DefaultGateway $DefaultGateway `
                      -ErrorAction Stop
-
     Set-DnsClientServerAddress -InterfaceAlias $InterfaceName -ServerAddresses $DNSServer -ErrorAction Stop
 }
 catch {
-    Write-Host "ERROR creating new IP config: $($_.Exception.Message)"
+    Write-Host "ERROR setting IP config: $($_.Exception.Message)"
     exit 1
 }
 
-Write-Host "`n[3/6] Attempting to rename computer to '$ComputerName'..."
-try {
-    Rename-Computer -NewName $ComputerName -Force -ErrorAction Stop
-    Write-Host "Rename operation completed or system already has that name."
-}
-catch {
-    $msg = $_.Exception.Message
-    if ($msg -like "*the new name is the same as the current name*") {
-        Write-Host "Skipping rename - It's already named '$ComputerName'."
-    }
-    else {
-        Write-Host "ERROR renaming computer: $msg"
-        exit 1
-    }
+### 4) Ensure Network is Stabilized
+Write-Host "`n==> Waiting for network to stabilize..."
+Start-Sleep -Seconds 5
+
+Write-Host "`n==> Checking connectivity to Domain Controller '$DCName'..."
+if (-not (Test-Connection -ComputerName $DCName -Count 2 -Quiet)) {
+    Write-Host "ERROR: Cannot reach domain controller '$DCName'. Check network settings."
+    exit 1
 }
 
-Write-Host "`n[4/6] Joining Domain '$DomainName' (non-interactive, no prompt)..."
+Write-Host "`n==> Checking DNS resolution for Domain '$DomainName'..."
+try {
+    $ResolveDomain = Resolve-DnsName $DomainName -ErrorAction Stop
+    Write-Host "DNS Resolution Successful: $($ResolveDomain.NameHost)"
+}
+catch {
+    Write-Host "ERROR: Failed to resolve '$DomainName'. Check DNS settings."
+    exit 1
+}
+
+### 5) Rename Computer Using Local Admin Account
+Write-Host "`n==> Renaming computer to '$ComputerName'..."
+try {
+    $CurrentName = $env:COMPUTERNAME
+    if ($CurrentName -eq $ComputerName) {
+        Write-Host "Skipping rename - It's already '$ComputerName'."
+    }
+    else {
+        Start-Process -FilePath "powershell.exe" -Credential $LocalCred -ArgumentList "-Command Rename-Computer -NewName $ComputerName -Force" -NoNewWindow -Wait
+        Write-Host "Computer renamed successfully. A reboot is required."
+        Restart-Computer -Force
+        exit 0  # Ensures script stops and runs again after reboot
+    }
+}
+catch {
+    Write-Host "ERROR renaming computer: $($_.Exception.Message)"
+    exit 1
+}
+
+### 6) Join Domain (Runs After Reboot)
+Write-Host "`n==> Joining Domain '$DomainName' using '$FullDomainUser'..."
 try {
     Add-Computer -DomainName $DomainName -Credential $Cred -Force -ErrorAction Stop
-    Write-Host "Domain join command completed successfully."
+    Write-Host "Domain join succeeded."
 }
 catch {
     Write-Host "ERROR joining domain: $($_.Exception.Message)"
     exit 1
 }
 
-Write-Host "`n[5/6] Remotely moving computer object into OU '$TargetOU' on '$DCName'..."
+### 7) Move Computer Object to Correct OU
+Write-Host "`n==> Moving computer object to '$TargetOU' via '$DCName'..."
 try {
     Invoke-Command -ComputerName $DCName -Credential $Cred -ScriptBlock {
         param($ComputerToMove, $OUPath)
-        Import-Module ActiveDirectory
-        
-        # Try desired name first:
+
+        Import-Module ActiveDirectory -ErrorAction Stop
+
+        # Attempt to find by the desired name first
         $comp = Get-ADComputer -Identity $ComputerToMove -ErrorAction SilentlyContinue
         if (-not $comp) {
-            # fallback: $env:COMPUTERNAME if rename hasn't fully applied in AD
             $fallback = $env:COMPUTERNAME
-            Write-Host "Couldn't find '$ComputerToMove'; trying '$fallback'..."
+            Write-Host "Not found: '$ComputerToMove'; trying '$fallback'..."
             $comp = Get-ADComputer -Identity $fallback -ErrorAction Stop
         }
-        $dn = $comp.DistinguishedName
 
-        Move-ADObject -Identity $dn -TargetPath $OUPath -ErrorAction Stop
-        "Successfully moved '$($comp.Name)' to OU: $OUPath"
+        Move-ADObject -Identity $comp.DistinguishedName -TargetPath $OUPath -ErrorAction Stop
+        Write-Host "Successfully moved '$($comp.Name)' to OU: $OUPath"
     } -ArgumentList $ComputerName, $TargetOU -ErrorAction Stop
 }
 catch {
-    Write-Host "ERROR moving computer in AD: $($_.Exception.Message)"
+    Write-Host "ERROR moving AD object: $($_.Exception.Message)"
     exit 1
 }
 
-Write-Host "`n[6/6] Rebooting now to finalize domain join..."
+### 8) Final Reboot
+Write-Host "`n==> Rebooting now to complete domain membership..."
 try {
     Restart-Computer -Force
 }
