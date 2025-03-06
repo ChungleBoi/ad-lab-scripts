@@ -134,7 +134,7 @@ else {
 ### 7) Join the Domain
 Write-Host "`n==> Joining Domain '$DomainName' using '$FullDomainUser' with name '$ComputerName'..."
 try {
-    Add-Computer -DomainName $DomainName -Credential $Cred -NewName $ComputerName -Force -ErrorAction Stop
+    Add-Computer -DomainName $DomainName -Credential $Cred -NewName $ComputerName -Force -ErrorAction Stop -WarningAction SilentlyContinue
     Write-Host "Domain join succeeded (pending reboot)."
 }
 catch {
