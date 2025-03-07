@@ -1,4 +1,4 @@
-# ------------------------------------------------------------------------
+# ------------------------------------------------------------------------ 
 # Setup-BetaService.ps1
 # ------------------------------------------------------------------------
 
@@ -33,12 +33,14 @@ if ($publicProfiles) {
         Write-Host "Changing network profile for interface '$($profile.InterfaceAlias)' from Public to Private."
         try {
             Set-NetConnectionProfile -InterfaceAlias $profile.InterfaceAlias -NetworkCategory Private
-        } catch {
+        }
+        catch {
             Write-Error "Failed to change network category for interface '$($profile.InterfaceAlias)': $_"
             return
         }
     }
-} else {
+}
+else {
     Write-Host "No Public network profiles found. Proceeding..."
 }
 
@@ -92,14 +94,16 @@ public class BetaService : ServiceBase {
     
     if (Test-Path "betaservice.exe") {
         Write-Host "betaservice.exe created successfully."
-    } else {
+    }
+    else {
         Write-Error "Failed to create betaservice.exe."
         return
     }
     
     # Clean up temporary source file
     Remove-Item $csFile -Force
-} else {
+}
+else {
     Write-Host "betaservice.exe found in the current directory. Proceeding..."
 }
 
@@ -127,4 +131,7 @@ schtasks /create /tn "RunBetaServiceEveryMinute" /sc minute /mo 1 /tr "powershel
 schtasks /create /tn "StartBetaServiceOnBoot" /sc onstart /tr "powershell.exe -NoProfile -ExecutionPolicy Bypass -Command Restart-Service BetaService" /ru "NT AUTHORITY\SYSTEM" /f
 
 # Step 11: Relay an Email to DEV01 (command saved in PowerShell history)
-Send-MailMessage -SmtpServer "MAIL01" -From "administrator@ad.lab" -To "daniela@ad.lab" -Subject "Test SMTP Relay" -Body "Hello from Windows Server SMTP!"
+Write-Host "===== Step 11: Relay an Email to DEV01 ====="
+Write-Host "you must run the following command manually in your interactive PowerShell session to capture it in history:"
+Write-Host "`nSend-MailMessage -SmtpServer 'MAIL01' -From 'administrator@ad.lab' -To 'daniela@ad.lab' -Subject 'Test SMTP Relay' -Body 'Hello from Windows Server SMTP!'`n"
+Write-Host "Copy and paste the above command at the PowerShell prompt, then press ENTER."
