@@ -142,97 +142,126 @@ $pluginContent = @'
 <?php
 /*
 Plugin Name: Backup and Migration
-Description: Backup plugin that allows you to specify an SMB share for storing backups.
-Version: 1.0
-Author: Your Name
+Plugin URI:  https://example.com/
+Description: Backup plugin that can use Windows UNC paths for storing backups (no SMB client needed).
+Version:     1.0
+Author:      Your Name
+Author URI:  https://example.com/
+License:     GPL2
 */
 
 if ( ! defined( 'ABSPATH' ) ) {
     exit; // Exit if accessed directly.
 }
 
-// Add the admin menu page.
+/**
+ * Create an admin menu page under Settings.
+ */
 add_action('admin_menu', 'bam_add_admin_menu');
 function bam_add_admin_menu() {
-    add_menu_page(
-        'Backup and Migration',
-        'Backup and Migration',
-        'manage_options',
-        'backup-and-migration',
-        'bam_settings_page',
-        'dashicons-backup',
-        90
+    add_options_page(
+        'Backup and Migration', 
+        'Backup and Migration', 
+        'manage_options', 
+        'backup-and-migration', 
+        'bam_settings_page'
     );
 }
 
-// Initialize and register settings.
+/**
+ * Initialize settings.
+ */
 add_action('admin_init', 'bam_settings_init');
 function bam_settings_init() {
     register_setting('bam_settings', 'bam_options');
 
     add_settings_section(
         'bam_section',
-        __('SMB Backup Settings', 'backup-and-migration'),
+        __('UNC Backup Settings', 'backup-and-migration'),
         'bam_section_callback',
         'bam_settings'
     );
 
+    // SMB/UNC path
     add_settings_field(
         'bam_smb_share',
-        __('Backup Storage Location (SMB share)', 'backup-and-migration'),
+        __('Backup Storage Location (UNC path)', 'backup-and-migration'),
         'bam_smb_share_render',
         'bam_settings',
         'bam_section'
     );
 
+    // Username
     add_settings_field(
         'bam_smb_username',
-        __('SMB Username', 'backup-and-migration'),
+        __('Windows Username', 'backup-and-migration'),
         'bam_smb_username_render',
         'bam_settings',
         'bam_section'
     );
 
+    // Password
     add_settings_field(
         'bam_smb_password',
-        __('SMB Password', 'backup-and-migration'),
+        __('Windows Password', 'backup-and-migration'),
         'bam_smb_password_render',
         'bam_settings',
         'bam_section'
     );
 }
 
+/**
+ * Render the UNC Path field.
+ */
 function bam_smb_share_render() {
     $options = get_option('bam_options');
     ?>
-    <input type="text" name="bam_options[bam_smb_share]" value="<?php echo isset($options['bam_smb_share']) ? esc_attr($options['bam_smb_share']) : ''; ?>" size="50" />
-    <p class="description">Enter the network share path, e.g. <code>\\10.10.14.120\samba</code></p>
+    <input type="text" name="bam_options[bam_smb_share]" 
+           value="<?php echo isset($options['bam_smb_share']) ? esc_attr($options['bam_smb_share']) : ''; ?>" 
+           size="50" />
+    <p class="description">
+        Enter the UNC path, e.g. <code>\\10.10.14.120\samba</code>
+    </p>
     <?php
 }
 
+/**
+ * Render Username field.
+ */
 function bam_smb_username_render() {
     $options = get_option('bam_options');
     ?>
-    <input type="text" name="bam_options[bam_smb_username]" value="<?php echo isset($options['bam_smb_username']) ? esc_attr($options['bam_smb_username']) : ''; ?>" />
+    <input type="text" name="bam_options[bam_smb_username]" 
+           value="<?php echo isset($options['bam_smb_username']) ? esc_attr($options['bam_smb_username']) : ''; ?>" />
     <?php
 }
 
+/**
+ * Render Password field.
+ */
 function bam_smb_password_render() {
     $options = get_option('bam_options');
     ?>
-    <input type="password" name="bam_options[bam_smb_password]" value="<?php echo isset($options['bam_smb_password']) ? esc_attr($options['bam_smb_password']) : ''; ?>" />
+    <input type="password" name="bam_options[bam_smb_password]" 
+           value="<?php echo isset($options['bam_smb_password']) ? esc_attr($options['bam_smb_password']) : ''; ?>" />
     <?php
 }
 
+/**
+ * Section callback description.
+ */
 function bam_section_callback() {
-    echo __('Configure the SMB share for storing backups.', 'backup-and-migration');
+    echo __('Configure the UNC path (e.g. \\server\\share) where backups should be stored. Remember: Windows credentials must be set at OS level.', 'backup-and-migration');
 }
 
-// Render the settings page.
+/**
+ * Render the main settings page.
+ */
 function bam_settings_page() {
     ?>
     <div class="wrap">
         <h1>Backup and Migration Settings</h1>
+
         <form action="options.php" method="post">
             <?php
                 settings_fields('bam_settings');
@@ -241,16 +270,16 @@ function bam_settings_page() {
             ?>
         </form>
 
-        <h2>Test SMB Connection</h2>
+        <hr>
+        <h2>Test UNC Connection</h2>
         <form method="post">
             <?php submit_button('Test Connection', 'secondary', 'bam_test_connection'); ?>
         </form>
         <?php
+        // If user clicks "Test Connection"
         if ( isset($_POST['bam_test_connection']) ) {
             echo '<h3>Connection Test Result:</h3>';
-            echo '<pre>';
-            echo bam_test_smb_connection();
-            echo '</pre>';
+            echo '<pre>' . esc_html( bam_trigger_connection() ) . '</pre>';
         }
         ?>
     </div>
@@ -258,46 +287,34 @@ function bam_settings_page() {
 }
 
 /**
- * Test the SMB connection using the php-smbclient extension.
+ * Attempt to open the UNC share (read-only) to see if it is accessible.
+ * This does NOT store or set credentials; you must have them stored at OS level
+ * or run the web server as a user who already has rights to that UNC path.
  */
-function bam_test_smb_connection() {
+function bam_trigger_connection() {
     $options = get_option('bam_options');
 
     if ( empty($options['bam_smb_share']) ) {
-        return "SMB share path not set.";
+        return "UNC path not set.";
     }
 
-    // Convert Windows-style share (e.g. \\10.10.14.120\samba) to smb:// format.
-    $share = $options['bam_smb_share'];
-    $smb_url = preg_replace('#^\\\\\\\\([^\\\\]+)\\\\([^\\\\]+)#', 'smb://$1/$2', $share);
+    $smb_share = rtrim($options['bam_smb_share'], "\\/");
 
-    if ( ! function_exists('smbclient_state_new') ) {
-        return "PHP smbclient extension is not installed or enabled.";
+    // Attempt to open the root UNC directory by appending a backslash.
+    $test_path = $smb_share . '\\';
+
+    try {
+        $handle = @fopen($test_path, 'r');
+        if ($handle) {
+            fclose($handle);
+            return "Connection successful! Opened: " . $test_path;
+        } else {
+            return "Failed to open: {$test_path}\n"
+                 . "Ensure OS-level credentials are set or the service user has permissions.";
+        }
+    } catch (Exception $e) {
+        return "Error: " . $e->getMessage();
     }
-
-    $smb = smbclient_state_new();
-    if ( ! $smb ) {
-        return "Failed to initialize SMB client state.";
-    }
-
-    $username = isset($options['bam_smb_username']) ? $options['bam_smb_username'] : '';
-    $password = isset($options['bam_smb_password']) ? $options['bam_smb_password'] : '';
-    if ( $username !== '' ) {
-        $smb_url = preg_replace('#^(smb://)#', '${1}' . rawurlencode($username) . ':' . rawurlencode($password) . '@', $smb_url);
-    }
-
-    $dir = @smbclient_opendir($smb, $smb_url);
-    if ( ! $dir ) {
-        return "Unable to open SMB share at $smb_url. Check credentials and share path.";
-    }
-
-    $files = [];
-    while (($file = smbclient_readdir($smb, $dir)) !== false) {
-        $files[] = $file;
-    }
-    smbclient_closedir($smb, $dir);
-
-    return "Connection successful. Directory contents:\n" . implode("\n", $files);
 }
 '@
 
@@ -391,8 +408,12 @@ Ensure that:
   - The domain account 'AD.LAB\francesca' exists,
   - It has the 'Log on as a service' right,
   - And the password is correct.
-Alternatively, if this is not a domain account, use a local account (e.g., '.\francesca')."
+"
     exit
 }
+
+Write-Host "Restarting Apache2.4 service..."
+Restart-Service -Name "Apache2.4" -Force
+Write-Host "Apache2.4 service restarted."
 
 Write-Host "Deployment script completed."
