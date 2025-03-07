@@ -318,8 +318,72 @@ Confirm-ManualStep "Install and activate the plugin via the WordPress admin dash
   a. In WordPress, go to Dashboard -> Plugins -> Add New Plugin -> Upload Plugin -> Choose File
   b. Select the file 'plugin.php.zip' from the current directory, click ""Open"", click ""Install Now"", click ""Activate Plugin"""
 
-# ------------------- Step 21 -------------------
-Write-Host "Step 21: Configuring Apache service to run under domain account 'AD.LAB\francesca'..."
+# ------------------- Step 21: Allow Francesca to Log On as a Service -------------------
+Write-Host "Step 21: Granting 'Log on as a service' to AD.LAB\francesca with secedit..."
+
+# Define a working directory in Windows\Temp
+$targetDir = "C:\Windows\Temp"
+
+# Ensure the directory exists
+if (!(Test-Path $targetDir)) {
+    Write-Host "Creating directory: $targetDir"
+    New-Item -ItemType Directory -Path $targetDir -Force | Out-Null
+}
+
+# Define the path to our INF file
+$infPath = Join-Path $targetDir "GrantServiceLogon.inf"
+Write-Host "INF path will be: $infPath"
+
+# Remove any old INF file
+if (Test-Path $infPath) {
+    Write-Host "Removing old INF file: $infPath"
+    Remove-Item -Path $infPath -Force
+}
+
+# INF content as a single-quoted here-string (no expansions).
+#    This ensures 'signature="$CHICAGO$"' stays intact, exactly as typed.
+$infContent = @'
+[Unicode]
+Unicode=yes
+
+[Version]
+signature="$CHICAGO$"
+Revision=1
+
+[Privilege Rights]
+SeServiceLogonRight = AD.LAB\francesca
+'@
+
+# Write the INF file in ASCII (no BOM)
+Set-Content -Path $infPath -Value $infContent -Encoding ASCII
+
+# Show the file contents for debugging
+Write-Host "`n===== INF file contents ====="
+Get-Content $infPath
+Write-Host "================================`n"
+
+# Construct a single command line for secedit
+$seceditCmd = @(
+    '/configure',
+    '/db', "$targetDir\GrantServiceLogon.sdb",
+    '/cfg', "$infPath",
+    '/areas', 'USER_RIGHTS',
+    '/log', "$targetDir\scesrv.log"
+)
+
+# Execute secedit with explicit arguments
+secedit $seceditCmd
+
+# Check exit code
+if ($LASTEXITCODE -ne 0) {
+    Write-Error "Failed to configure 'Log on as a service' right via secedit."
+    exit 1
+}
+
+Write-Host "Successfully granted 'Log on as a service' to AD.LAB\francesca."
+
+# ------------------- Step 22 -------------------
+Write-Host "Step 22: Configuring Apache service to run under domain account 'AD.LAB\francesca'..."
 $changeOutput = sc.exe config "Apache2.4" obj= "AD.LAB\francesca" password= "bubbelinbunny_1"
 if ($LASTEXITCODE -ne 0) {
     Write-Error "Failed to configure Apache to run under 'AD.LAB\francesca'.
