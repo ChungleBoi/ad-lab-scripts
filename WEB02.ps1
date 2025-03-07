@@ -1,9 +1,46 @@
-# Step 5: Download MS SQL Server 2022 - Developer Edition
-Write-Host "Download 'SQL Server 2022 - Developer' from:`nhttps://www.microsoft.com/en-us/sql-server/sql-server-downloads" -ForegroundColor Cyan
-Read-Host "Press 'Y' once download is complete"
+# Define the SSMS install path to check
+$ssmsPath = "C:\Program Files (x86)\Microsoft SQL Server Management Studio 20\Common7\IDE\Ssms.exe"
 
-# Step 6: Install MS SQL Server 2022 - Developer Edition
-Write-Host (@"
+if (Test-Path $ssmsPath) {
+    Write-Host "SSMS is already installed. Skipping steps 5-8."
+    Write-Host "Proceeding to steps 9-12 (SQL Operations)..." -ForegroundColor Cyan
+
+    # Steps 9-12: SQL Operations (wrapped in try/catch)
+    try {
+        $sqlCommands = @"
+USE master;
+CREATE TABLE dbo.Users
+(
+    ID INT IDENTITY(1,1) PRIMARY KEY,
+    Username VARCHAR(50) NOT NULL,
+    Password VARCHAR(50) NOT NULL
+);
+INSERT INTO dbo.Users (Username, Password)
+VALUES ('sa', 'Password123');
+SELECT * FROM master.information_schema.tables WHERE table_name = 'Users';
+"@
+
+        # Write the SQL commands to a temporary file
+        $sqlPath = Join-Path $env:TEMP "setup.sql"
+        $sqlCommands | Out-File $sqlPath -Encoding ASCII
+
+        # Attempt to invoke the commands against the instance "WEB02"
+        Invoke-Sqlcmd -InputFile $sqlPath -ServerInstance "WEB02" -ErrorAction Stop
+
+        Write-Host "SQL operations (steps 9-12) completed successfully."
+    }
+    catch {
+        Write-Error "Error encountered while executing SQL commands. Exiting script."
+        Exit
+    }
+}
+else {
+    # Step 5: Download MS SQL Server 2022 - Developer Edition
+    Write-Host "Download 'SQL Server 2022 - Developer' from:`nhttps://www.microsoft.com/en-us/sql-server/sql-server-downloads" -ForegroundColor Cyan
+    Read-Host "Press 'Y' once download is complete"
+
+    # Step 6: Install MS SQL Server 2022 - Developer Edition
+    Write-Host (@"
 Manually perform the following:
 a. Double-click the installation file in the "Downloads" folder
 b. Select "Custom" as Installation Type and click "Install"
@@ -17,33 +54,22 @@ h. On "Database Engine Configuration":
    - Under "Specify SQL Server administrators" click "Add Current User" to add iis_service.
    - Click "Next" and "Install" to finish.
 "@) -ForegroundColor Cyan
-Read-Host "Press 'Y' once completed"
+    Read-Host "Press 'Y' once completed"
 
-# Step 7: Start SQL Server services
-Set-Service 'MSSQLSERVER' -StartupType Automatic
-Set-Service 'SQLSERVERAGENT' -StartupType Automatic
-Start-Service 'MSSQLSERVER'
-Start-Service 'SQLSERVERAGENT'
+    # Step 7: Start SQL Server services
+    Set-Service 'MSSQLSERVER' -StartupType Automatic
+    Set-Service 'SQLSERVERAGENT' -StartupType Automatic
+    Start-Service 'MSSQLSERVER'
+    Start-Service 'SQLSERVERAGENT'
 
-# Step 8: Install SSMS
-Write-Host "Download and install SSMS from:`nhttps://learn.microsoft.com/en-us/sql/ssms/download-sql-server-management-studio-ssms?view=sql-server-ver16`nRestart your system after installation." -ForegroundColor Cyan
-Read-Host "Press 'Y' once completed"
+    # Step 8: Install SSMS
+    Write-Host "Download and install SSMS from:`nhttps://learn.microsoft.com/en-us/sql/ssms/download-sql-server-management-studio-ssms?view=sql-server-ver16" -ForegroundColor Cyan
+    Write-Host "Press Restart once the SSMS installation is complete (the SSMS installer typically offers a Restart button)."
+    # Immediately exit so the user can restart without continuing further steps
+    return
+}
 
-# Step 9-12: SQL Operations
-$sqlCommands = @"
-USE master;
-CREATE TABLE dbo.Users
-(
-    ID INT IDENTITY(1,1) PRIMARY KEY,
-    Username VARCHAR(50) NOT NULL,
-    Password VARCHAR(50) NOT NULL
-);
-INSERT INTO dbo.Users (Username, Password)
-VALUES ('sa', 'Password123');
-SELECT * FROM master.information_schema.tables WHERE table_name = 'Users';
-"@
-$sqlCommands | Out-File "$env:TEMP\setup.sql" -Encoding ASCII
-Invoke-Sqlcmd -InputFile "$env:TEMP\setup.sql" -ServerInstance "WEB02"
+# Steps 13–18 run only if we have successfully completed (or skipped) steps 9–12.
 
 # Step 13: Enable IIS Management Console, ASP, Windows Authentication
 Write-Host (@"
@@ -60,14 +86,17 @@ Read-Host "Press 'Y' once completed"
 Add-MpPreference -ExclusionPath "C:\Users\Public"
 
 # Step 15: Create login.asp within script
-# (No prompt for server name or password; using "web02" and "Password123" directly)
-$serverName = "web02"
-$plainSaPassword = "Password123"
-
-# Define the content of the login.asp file
+# We define the ASP variables at the top so they won't be 'undefined'
 $loginAspContent = @"
 <%
 Option Explicit
+
+' ============================
+'  Declare Connection Variables
+' ============================
+Dim dbServer, dbPassword
+dbServer = "web02"
+dbPassword = "Password123"
 
 ' ============================
 '  Step 1: Grab User Input
@@ -95,7 +124,7 @@ Set rs   = Server.CreateObject("ADODB.Recordset")
 '  Step 4: Connect to SQL Server
 ' ============================
 On Error Resume Next
-conn.Open "Provider=SQLOLEDB;Data Source=" & $serverName & ";Initial Catalog=master;User ID=sa;Password=" & $plainSaPassword & ";"
+conn.Open "Provider=SQLOLEDB;Data Source=" & dbServer & ";Initial Catalog=master;User ID=sa;Password=" & dbPassword & ";"
 
 If Err.Number <> 0 Then
     Response.Write "<h3>Connection Error: " & Err.Description & "</h3>"
@@ -161,11 +190,7 @@ End If
 
 # Define the output path
 $outputPath = "C:\inetpub\wwwroot\login.asp"
-
-# Write the content to the file
 Set-Content -Path $outputPath -Value $loginAspContent -Force
-
-# Confirm success
 Write-Host "login.asp has been created at $outputPath"
 
 # Step 16: Open Port 80
