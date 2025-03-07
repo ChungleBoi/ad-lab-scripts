@@ -60,27 +60,42 @@ Read-Host "Press 'Y' once completed"
 Add-MpPreference -ExclusionPath "C:\Users\Public"
 
 # Step 15: Create login.asp within script
-$serverName = Read-Host "Enter the server name (e.g., web02)"
-$saPassword = Read-Host "Enter the SA password" -AsSecureString
-$plainSaPassword = [Runtime.InteropServices.Marshal]::PtrToStringAuto([Runtime.InteropServices.Marshal]::SecureStringToBSTR($saPassword))
+# (No prompt for server name or password; using "web02" and "Password123" directly)
+$serverName = "web02"
+$plainSaPassword = "Password123"
 
+# Define the content of the login.asp file
 $loginAspContent = @"
 <%
 Option Explicit
 
+' ============================
+'  Step 1: Grab User Input
+' ============================
 Dim username, password
 username = Request.Form("username")
 password = Request.Form("password")
 
+' ============================
+'  Step 2: Build (Insecure) SQL Query
+' ============================
+' WARNING: This is deliberately vulnerable to SQL injection.
 Dim sqlQuery
-sqlQuery = "SELECT * FROM dbo.Users WHERE username = '" & username & "' AND password = '" & password & "'"
+sqlQuery = "SELECT * FROM dbo.Users WHERE username = '" & username & _
+           "' AND password = '" & password & "'"
 
+' ============================
+'  Step 3: Create ADO Objects
+' ============================
 Dim conn, rs
 Set conn = Server.CreateObject("ADODB.Connection")
 Set rs   = Server.CreateObject("ADODB.Recordset")
 
+' ============================
+'  Step 4: Connect to SQL Server
+' ============================
 On Error Resume Next
-conn.Open "Provider=SQLOLEDB;Data Source=$serverName;Initial Catalog=master;User ID=sa;Password=$plainSaPassword;"
+conn.Open "Provider=SQLOLEDB;Data Source=" & $serverName & ";Initial Catalog=master;User ID=sa;Password=" & $plainSaPassword & ";"
 
 If Err.Number <> 0 Then
     Response.Write "<h3>Connection Error: " & Err.Description & "</h3>"
@@ -88,22 +103,53 @@ If Err.Number <> 0 Then
 End If
 On Error GoTo 0
 
+' ============================
+'  Step 5: Execute the Query
+' ============================
+Dim loginAttempted
+loginAttempted = False
+
 If username <> "" Or password <> "" Then
+    loginAttempted = True
+    On Error Resume Next
     Set rs = conn.Execute(sqlQuery)
+    If Err.Number <> 0 Then
+        Response.Write "<h3>Query Error: " & Err.Description & "</h3>"
+        conn.Close
+        Set conn = Nothing
+        Response.End
+    End If
+    On Error GoTo 0
+End If
+
+' ============================
+'  Step 6: Check for Results
+' ============================
+If loginAttempted Then
     If Not rs.EOF Then
         Response.Write "<h3>Login success!</h3>"
     Else
         Response.Write "<h3>Login failed.</h3>"
     End If
-    rs.Close
 End If
-conn.Close
-Set rs = Nothing
-Set conn = Nothing
+
+' ============================
+'  Step 7: Clean up
+' ============================
+If loginAttempted Then
+    rs.Close
+    conn.Close
+    Set rs = Nothing
+    Set conn = Nothing
+End If
 %>
 
 <html>
+<head>
+  <title>Very Insecure Login Form</title>
+</head>
 <body>
+  <h1>Very Insecure Login Form</h1>
   <form method="POST" action="login.asp">
     Username: <input type="text" name="username"><br/>
     Password: <input type="password" name="password"><br/>
@@ -112,8 +158,15 @@ Set conn = Nothing
 </body>
 </html>
 "@
-Set-Content -Path "C:\inetpub\wwwroot\login.asp" -Value $loginAspContent -Force
-Write-Host "login.asp created at C:\inetpub\wwwroot\login.asp"
+
+# Define the output path
+$outputPath = "C:\inetpub\wwwroot\login.asp"
+
+# Write the content to the file
+Set-Content -Path $outputPath -Value $loginAspContent -Force
+
+# Confirm success
+Write-Host "login.asp has been created at $outputPath"
 
 # Step 16: Open Port 80
 New-NetFirewallRule -DisplayName "Open Port 80" -Direction Inbound -Protocol TCP -LocalPort 80 -Action Allow
