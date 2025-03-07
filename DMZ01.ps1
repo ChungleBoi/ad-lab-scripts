@@ -2,7 +2,8 @@
 # Setup-BetaService.ps1
 # ------------------------------------------------------------------------
 
-# Step 1: Update network connection profiles from Public to Private
+Write-Host "===== Step 1: Update network connection profiles from Public to Private =====" -ForegroundColor Cyan
+
 function Wait-ForNetworkIdentification {
     param(
         [Parameter(Mandatory = $true)]
@@ -43,18 +44,21 @@ if ($publicProfiles) {
 else {
     Write-Host "No Public network profiles found. Proceeding..."
 }
+Start-Sleep 1
 
-# Step 2: Enable WinRM (auto-confirm prompts)
+Write-Host "`n===== Step 2: Enable WinRM (auto-confirm prompts) =====" -ForegroundColor Cyan
 winrm quickconfig -q
+Start-Sleep 1
 
-# Step 3: Create application directory and add a Windows Defender exclusion
+Write-Host "`n===== Step 3: Create application directory and add a Windows Defender exclusion =====" -ForegroundColor Cyan
 $betaDir = "C:\MyApps\Beta Program"
 if (-not (Test-Path $betaDir)) {
     New-Item -Path $betaDir -ItemType Directory -Force | Out-Null
 }
 Add-MpPreference -ExclusionPath "C:\MyApps"
+Start-Sleep 1
 
-# Step 4: Create betaservice.exe if it does not exist in the current directory
+Write-Host "`n===== Step 4: Create betaservice.exe if it does not exist in the current directory =====" -ForegroundColor Cyan
 $exeSource = Join-Path (Get-Location) "betaservice.exe"
 if (-not (Test-Path $exeSource)) {
     Write-Host "betaservice.exe not found in the current directory. Creating betaservice.exe..."
@@ -106,32 +110,44 @@ public class BetaService : ServiceBase {
 else {
     Write-Host "betaservice.exe found in the current directory. Proceeding..."
 }
+Start-Sleep 1
 
-# Step 5: Copy betaservice.exe from the current directory to the application directory
-Copy-Item -Path (Join-Path (Get-Location) "betaservice.exe") -Destination $betaDir -Force
-Write-Host "Copied betaservice.exe to $betaDir."
+Write-Host "`n===== Step 5: Move betaservice.exe to the application directory =====" -ForegroundColor Cyan
+Move-Item -Path $exeSource -Destination $betaDir -Force
+Write-Host "Moved betaservice.exe to $betaDir."
 Set-Location $betaDir
+Start-Sleep 1
 
-# Step 6: Modify Registry Keys for BetaService
+Write-Host "`n===== Step 6: Modify Registry Keys for BetaService =====" -ForegroundColor Cyan
 $registryPath = "HKLM:\SYSTEM\CurrentControlSet\Services\BetaService"
 New-Item -Path $registryPath -Force | Out-Null
 Set-ItemProperty -Path $registryPath -Name ImagePath -Value 'C:\MyApps\Beta Program\betaservice.exe'
+Start-Sleep 1
 
-# Step 7: Create BetaService using sc.exe
+Write-Host "`n===== Step 7: Create BetaService using sc.exe =====" -ForegroundColor Cyan
 sc.exe create BetaService binPath= "C:\MyApps\Beta Program\betaservice.exe" type= own start= auto
+Start-Sleep 1
 
-# Step 8: Confirm BetaService status
-Get-CimInstance -ClassName Win32_Service | Where-Object { $_.Name -eq "BetaService" }
-Get-Service BetaService
+Write-Host "`n===== Step 8: Confirm BetaService status =====" -ForegroundColor Cyan
+Get-CimInstance -ClassName Win32_Service | Where-Object { $_.Name -eq "BetaService" } | Out-Host
+Get-Service BetaService | Out-Host
+Start-Sleep 1
 
-# Step 9: Create a Scheduled Task to restart BetaService every minute
+Write-Host "`n===== Step 9: Create a Scheduled Task to restart BetaService every minute =====" -ForegroundColor Cyan
 schtasks /create /tn "RunBetaServiceEveryMinute" /sc minute /mo 1 /tr "powershell -NoProfile -ExecutionPolicy Bypass -Command Restart-Service BetaService" /ru "NT AUTHORITY\SYSTEM" /f
+Start-Sleep 1
 
-# Step 10: Create a Scheduled Task to start BetaService on system boot
+Write-Host "`n===== Step 10: Create a Scheduled Task to start BetaService on system boot =====" -ForegroundColor Cyan
 schtasks /create /tn "StartBetaServiceOnBoot" /sc onstart /tr "powershell.exe -NoProfile -ExecutionPolicy Bypass -Command Restart-Service BetaService" /ru "NT AUTHORITY\SYSTEM" /f
+Start-Sleep 1
 
-# Step 11: Relay an Email to DEV01 (command saved in PowerShell history)
-Write-Host "===== Step 11: Relay an Email to DEV01 ====="
-Write-Host "you must run the following command manually in your interactive PowerShell session to capture it in history:"
-Write-Host "`nSend-MailMessage -SmtpServer 'MAIL01' -From 'administrator@ad.lab' -To 'daniela@ad.lab' -Subject 'Test SMTP Relay' -Body 'Hello from Windows Server SMTP!'`n"
-Write-Host "Copy and paste the above command at the PowerShell prompt, then press ENTER."
+# =========================
+# FINAL STEP
+# =========================
+Write-Host "`n===== Step 11: Relay an Email to DEV01 (final step) =====" -ForegroundColor Magenta
+Write-Host "Run the following command manually in your interactive PowerShell session" -ForegroundColor Magenta
+Write-Host "" -ForegroundColor Magenta
+Write-Host "Send-MailMessage -SmtpServer 'MAIL01' -From 'administrator@ad.lab' -To 'daniela@ad.lab' -Subject 'Test SMTP Relay' -Body 'Hello from Windows Server SMTP!'" -ForegroundColor Yellow
+Write-Host "" -ForegroundColor Magenta
+Write-Host "Copy and paste the above command at your PowerShell prompt, then press ENTER." -ForegroundColor Magenta
+Write-Host "This ensures it appears in your PSReadLine console history." -ForegroundColor Magenta
