@@ -2,23 +2,72 @@
 # Setup-NewService.ps1
 # ------------------------------------------------------------------------
 # 1. Build a minimal .NET console application called NewService.exe
-#    It writes "NewService started!" to "service.log" in its own folder.
-
-$source = @"
+#    It attempts to load and run NewService.dll via its exported ReflectiveLoader function,
+#    and writes a log message depending on its execution result.
+$source = @'
 using System;
 using System.IO;
+using System.Runtime.InteropServices;
 
 public static class Program
 {
+    // P/Invoke declarations to load a native DLL.
+    [DllImport("kernel32.dll", SetLastError = true)]
+    public static extern IntPtr LoadLibrary(string lpFileName);
+
+    [DllImport("kernel32.dll", SetLastError = true)]
+    public static extern IntPtr GetProcAddress(IntPtr hModule, string procName);
+
+    // Define a delegate for the ReflectiveLoader function.
+    // We assume the exported function has the signature: int ReflectiveLoader(void)
+    [UnmanagedFunctionPointer(CallingConvention.StdCall)]
+    public delegate int ReflectiveLoaderDelegate();
+
     public static void Main()
     {
         string exeDir = AppDomain.CurrentDomain.BaseDirectory;
         string logPath = Path.Combine(exeDir, "service.log");
+        string dllPath = Path.Combine(exeDir, "NewService.dll");
 
-        File.WriteAllText(logPath, "NewService started!");
+        if (!File.Exists(dllPath))
+        {
+            File.WriteAllText(logPath, "NewService.dll is missing.");
+        }
+        else
+        {
+            try
+            {
+                IntPtr hModule = LoadLibrary(dllPath);
+                if (hModule == IntPtr.Zero)
+                {
+                    int err = Marshal.GetLastWin32Error();
+                    File.WriteAllText(logPath, "Failed to load NewService.dll. Error: " + err);
+                }
+                else
+                {
+                    IntPtr procAddress = GetProcAddress(hModule, "ReflectiveLoader");
+                    if (procAddress == IntPtr.Zero)
+                    {
+                        int err = Marshal.GetLastWin32Error();
+                        File.WriteAllText(logPath, "ReflectiveLoader not found in NewService.dll. Error: " + err);
+                    }
+                    else
+                    {
+                        ReflectiveLoaderDelegate loader = (ReflectiveLoaderDelegate)Marshal.GetDelegateForFunctionPointer(procAddress, typeof(ReflectiveLoaderDelegate));
+                        int result = loader();
+                        File.WriteAllText(logPath, "NewService.dll executed successfully with result " + result);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                File.WriteAllText(logPath, "Error executing NewService.dll: " + ex.Message);
+            }
+        }
+        Environment.Exit(1);
     }
 }
-"@
+'@
 
 Write-Host "`nBuilding NewService.exe from embedded C# code..."
 Add-Type -TypeDefinition $source -OutputAssembly "NewService.exe" -OutputType ConsoleApplication
@@ -69,7 +118,7 @@ function Grant-LogonAsServiceRight($account) {
     Write-Host "`nExporting local security policy..."
     Start-Process -FilePath "secedit.exe" -ArgumentList "/export", "/cfg", "$cfgFile" -Wait -NoNewWindow
 
-    Write-Host "Modifying exported policy to add '$account' to SeServiceLogonRight..."
+    Write-Host "`nModifying exported policy to add '$account' to SeServiceLogonRight..."
     $policy = Get-Content $cfgFile
     $rightPattern = '^SeServiceLogonRight\s*=\s*(.*)'
     $found = $false
@@ -88,15 +137,15 @@ function Grant-LogonAsServiceRight($account) {
     }
     Set-Content $cfgFile $policy
 
-    Write-Host "Importing updated policy..."
+    Write-Host "`nImporting updated policy..."
     # Pipe "Y" to auto-confirm the /overwrite prompt
     $importCommand = "echo Y | secedit.exe /import /db `"$sdbFile`" /cfg `"$cfgFile`" /overwrite"
     cmd.exe /c $importCommand | Out-Null
 
-    Write-Host "Applying updated policy (USER_RIGHTS)..."
+    Write-Host "`nApplying updated policy (USER_RIGHTS)..."
     Start-Process -FilePath "secedit.exe" -ArgumentList "/configure", "/db", "$sdbFile", "/cfg", "$cfgFile", "/areas", "USER_RIGHTS" -Wait -NoNewWindow
 
-    Write-Host "Granted 'Log on as a service' right to $account."
+    Write-Host "`nGranted 'Log on as a service' right to $account."
 }
 
 Write-Host "`nGranting 'Log on as a service' right to AD.LAB\Jamie..."
