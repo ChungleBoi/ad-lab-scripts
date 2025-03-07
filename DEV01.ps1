@@ -62,7 +62,19 @@ Confirm-ManualStep "Install XAMPP for Windows:
   b. Run the installer from your Downloads folder, click 'Allow' on the UAC Prompt to allow Apache, and choose the default options to install Apache"
 
 # ------------------- Steps 9 & 12 -------------------
+# First check if httpd.exe is found
+if (!(Test-Path "C:\xampp\apache\bin\httpd.exe")) {
+    Write-Warning "Apache httpd.exe not found. Ensure XAMPP is installed in C:\xampp."
+
+    # Reprompt the user to install XAMPP
+    Confirm-ManualStep "Install XAMPP for Windows:
+      a. Download from https://www.apachefriends.org/
+      b. Run the installer from your Downloads folder, click 'Allow' on the UAC Prompt to allow Apache, and choose the default options to install Apache"
+}
+
+# After the second prompt, check again
 if (Test-Path "C:\xampp\apache\bin\httpd.exe") {
+
     Write-Host "Step 9/12: Checking Apache configuration..."
     $httpdTestOutput = & "C:\xampp\apache\bin\httpd.exe" -t 2>&1
     if ($httpdTestOutput -match "Syntax OK") {
@@ -75,16 +87,17 @@ if (Test-Path "C:\xampp\apache\bin\httpd.exe") {
     }
     else {
         Write-Error "Apache configuration error: $httpdTestOutput"
-        exit
+        # Not terminating the script; just stop Apache steps here
     }
-} else {
-    Write-Warning "Apache httpd.exe not found. Ensure XAMPP is installed in C:\xampp."
-}
 
-# ------------------- Step 13 -------------------
-Write-Host "Step 13: Starting Apache and MySQL services..."
-Start-Service -Name "Apache2.4" -ErrorAction SilentlyContinue
-Start-Service -Name "mysql" -ErrorAction SilentlyContinue
+    # ------------------- Step 13 -------------------
+    Write-Host "Step 13: Starting Apache and MySQL services..."
+    Start-Service -Name "Apache2.4" -ErrorAction SilentlyContinue
+    Start-Service -Name "mysql" -ErrorAction SilentlyContinue
+
+} else {
+    Write-Warning "Apache httpd.exe still not found. Skipping Apache configuration and service start."
+}
 
 # ------------------- Steps 14-16: MySQL Database/User Setup -------------------
 Confirm-ManualStep "Configure MySQL via phpMyAdmin:
@@ -138,6 +151,7 @@ Confirm-ManualStep "Run the WordPress installer:
 Write-Host "Step 19: Creating the plugin file and compressing it into plugin.php.zip..."
 $pluginFile = Join-Path -Path (Get-Location) -ChildPath "plugin.php"
 $pluginZip = Join-Path -Path (Get-Location) -ChildPath "plugin.php.zip"
+
 $pluginContent = @'
 <?php
 /*
@@ -318,8 +332,11 @@ function bam_trigger_connection() {
 }
 '@
 
-# Write the plugin content to plugin.php
-Set-Content -Path $pluginFile -Value $pluginContent -Encoding UTF8
+#
+# Because the older PowerShell version doesn't support UTF8NoBOM,
+# we'll save the plugin as ASCII (no BOM) to avoid BOM issues.
+#
+Set-Content -Path $pluginFile -Value $pluginContent -Encoding Ascii
 Write-Host "Created plugin file: $pluginFile"
 
 # Compress plugin.php into plugin.php.zip
@@ -372,7 +389,7 @@ SeServiceLogonRight = AD.LAB\francesca
 '@
 
 # Write the INF file in ASCII (no BOM)
-Set-Content -Path $infPath -Value $infContent -Encoding ASCII
+Set-Content -Path $infPath -Value $infContent -Encoding Ascii
 
 # Show the file contents for debugging
 Write-Host "`n===== INF file contents ====="
@@ -401,6 +418,9 @@ Write-Host "Successfully granted 'Log on as a service' to AD.LAB\francesca."
 
 # ------------------- Step 22 -------------------
 Write-Host "Step 22: Configuring Apache service to run under domain account 'AD.LAB\francesca'..."
+Write-Host "Stopping Apache2.4 service..."
+Stop-Service -Name "Apache2.4" -Force -ErrorAction SilentlyContinue
+
 $changeOutput = sc.exe config "Apache2.4" obj= "AD.LAB\francesca" password= "bubbelinbunny_1"
 if ($LASTEXITCODE -ne 0) {
     Write-Error "Failed to configure Apache to run under 'AD.LAB\francesca'.
@@ -409,11 +429,11 @@ Ensure that:
   - It has the 'Log on as a service' right,
   - And the password is correct.
 "
-    exit
+    # Not terminating; just note that the config step failed.
+} else {
+    Write-Host "Starting Apache2.4 service..."
+    Start-Service -Name "Apache2.4" -ErrorAction SilentlyContinue
+    Write-Host "Apache2.4 service restarted."
 }
-
-Write-Host "Restarting Apache2.4 service..."
-Restart-Service -Name "Apache2.4" -Force
-Write-Host "Apache2.4 service restarted."
 
 Write-Host "Deployment script completed."
