@@ -23,7 +23,7 @@ Write-Host "Creating share for DomainAdminsShare..."
 net share DomainAdminsShare="C:\DomainAdminsShare" /GRANT:"Domain Admins",FULL
 
 Write-Host "Creating flag.txt in C:\DomainAdminsShare..."
-Set-Content -Path "C:\DomainAdminsShare\flag.txt" -Value "Your flag value here"
+Set-Content -Path "C:\DomainAdminsShare\flag.txt" -Value "H@6K3RS3C101TheKing!@#$"
 
 # 6. Limit access to the flag.txt to only Domain Admins
 Write-Host "`nRemoving inheritance from flag.txt..."
