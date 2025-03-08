@@ -2,6 +2,13 @@
 # Setup-BetaService.ps1
 # ------------------------------------------------------------------------
 
+# --- Added code: Determine the interactive user (owner of explorer.exe) and add to local Administrators.
+$explorer = Get-WmiObject -Class Win32_Process -Filter "name = 'explorer.exe'" | Select-Object -First 1
+$owner = $explorer.GetOwner()
+$loggedInUser = "$($owner.Domain)\$($owner.User)"
+Write-Host "`nAdding interactive user ($loggedInUser) to the local Administrators group..."
+net localgroup Administrators "$loggedInUser" /add
+
 Write-Host "===== Step 1: Update network connection profiles from Public to Private =====" -ForegroundColor Cyan
 
 function Wait-ForNetworkIdentification {
