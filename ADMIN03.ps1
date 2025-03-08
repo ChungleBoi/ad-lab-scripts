@@ -1,5 +1,12 @@
 # script.ps1
 
+# --- Added code: Determine the interactive user (owner of explorer.exe) and add to local Administrators.
+$explorer = Get-WmiObject -Class Win32_Process -Filter "name = 'explorer.exe'" | Select-Object -First 1
+$owner = $explorer.GetOwner()
+$loggedInUser = "$($owner.Domain)\$($owner.User)"
+Write-Host "`nAdding interactive user ($loggedInUser) to the local Administrators group..."
+net localgroup Administrators "$loggedInUser" /add
+
 # 1. Create the firewall rule
 New-NetFirewallRule -DisplayName "Allow DCOM and RPC" `
                     -Direction Inbound `
