@@ -1,0 +1,13 @@
+Domain Join Information:
+IP Address: 10.10.14.40
+Hostname: WEB02
+Log in as: ad\iis_service
+Make iis_service a local Administrator
+
+
+Instructions (after completing setup): 
+Sign in as Betty to cache a domain credential
+
+
+Ensure this Defender exclusion is applied:
+Add-MpPreference -ExclusionPath "C:\Users\Public"
