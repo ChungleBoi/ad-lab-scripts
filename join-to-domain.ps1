@@ -1,10 +1,10 @@
 <#
   Automated Domain Join Script
   - Prompts user to confirm Tamper Protection is disabled (Y/N).
+  - Prompts user to enter the computer name and IP address.
   - Configures static IP.
   - Renames the computer (if needed).
   - Joins the domain and moves computer to the specified OU.
-  - Adds "AD\daniela" to local Administrators group.
   - Syncs time with the domain controller.
   - Gives final login instructions.
   - Reboots at the end.
@@ -14,14 +14,12 @@
 param(
     # ====== NETWORK SETTINGS ======
     [string]$InterfaceName   = "Ethernet0",
-    [string]$NewIPAddress    = "10.10.14.3",
     [int]$PrefixLength       = 24,
     [string]$DefaultGateway  = "10.10.14.1",
     [string]$DNSServer       = "10.10.14.1",
 
     # ====== DOMAIN INFO ======
     [string]$DomainName      = "AD.LAB",      # e.g. AD.LAB
-    [string]$ComputerName    = "FILES03",
 
     # ====== DOMAIN CREDENTIALS ======
     [string]$DomainAdminUser = "Administrator",
@@ -32,11 +30,19 @@ param(
     [string]$LocalAdminPass  = "password123!!",
 
     # ====== DOMAIN CONTROLLER HOSTNAME ======
-    [string]$DCName          = "dc01.ad.lab",
-
-    # ====== TARGET OU DN (OPTIONAL) ======
-    [string]$TargetOU        = "OU=DisableDefender\+EnableICMP_Policy,DC=AD,DC=LAB"
+    [string]$DCName          = "dc01.ad.lab"
 )
+
+### 0) Prompt for Computer Name and IP Address
+$ComputerName = Read-Host "Enter the desired computer name"
+$NewIPAddress = Read-Host "Enter the new IP address"
+
+# Set Target OU based on Computer Name (case-insensitive check)
+if ($ComputerName.ToUpper() -eq "ADMIN04") {
+    $TargetOU = "OU=DisableSMBSigning\+DisableDefender\+EnableICMP_Policy,DC=AD,DC=LAB"
+} else {
+    $TargetOU = "OU=DisableDefender\+EnableICMP_Policy,DC=AD,DC=LAB"
+}
 
 ### 1) Confirm Tamper Protection Disabled
 Write-Host "Have you disabled Tamper Protection in Windows Security? (Y/N)"
@@ -142,7 +148,7 @@ catch {
     exit 1
 }
 
-### 8) Move Computer Object to Target OU (If Specified)
+### 8) Move Computer Object to Target OU
 if (-not [string]::IsNullOrWhiteSpace($TargetOU)) {
     Write-Host "`n==> Attempting to move computer object '$ComputerName' to '$TargetOU'..."
     try {
@@ -175,25 +181,7 @@ if (-not [string]::IsNullOrWhiteSpace($TargetOU)) {
     }
 }
 
-### 9) Add AD\daniela to Local Administrators
-Write-Host "`n==> Adding 'AD\daniela' to the local Administrators group..."
-try {
-    net localgroup Administrators "AD\daniela" /add
-    Write-Host "Command completed. Verifying membership..."
-
-    $localAdmins = net localgroup Administrators | Out-String
-    if ($localAdmins -match "AD\\daniela") {
-        Write-Host "Successfully verified that 'AD\daniela' is in local Administrators."
-    }
-    else {
-        Write-Host "ERROR: 'AD\daniela' not found in local Administrators after adding."
-    }
-}
-catch {
-    Write-Host "ERROR adding 'AD\daniela' to local Administrators group: $($_.Exception.Message)"
-}
-
-### 10) Time Sync with Domain Controller
+### 9) Time Sync with Domain Controller
 Write-Host "`n==> Syncing time with the domain..."
 try {
     w32tm /resync
@@ -203,10 +191,10 @@ catch {
     Write-Host "WARNING: Failed to sync time. $($_.Exception.Message)"
 }
 
-### 11) Final Instructions, Prompt & Reboot
+### 10) Final Instructions, Prompt & Reboot
 Write-Host "`n=============================================================="
 Write-Host "After joining this member workstation to the domain, on the login screen"
-Write-Host "click 'Other User' and enter the credentials: AD\daniela to log in."
+Write-Host "click 'Other User' and enter your domain credentials."
 Write-Host "=============================================================="
 
 Write-Host "`n==> Press ENTER to reboot and complete domain membership..."
