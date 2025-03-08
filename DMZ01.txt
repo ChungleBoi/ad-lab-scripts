@@ -1,0 +1,14 @@
+Domain Join Information:
+IP Address: 10.10.14.60
+Hostname: DMZ01
+Log in as: ad\chris
+Make Chris a local Administrator
+
+
+Instructions (after completing setup): 
+Run this command, to save a clue to PowerShell history:
+Send-MailMessage -SmtpServer "MAIL01" -From "administrator@ad.lab" -To "daniela@ad.lab" -Subject "Test SMTP Relay" -Body "Hello from Windows Server SMTP!"
+
+
+Ensure this Defender exclusion is applied:
+Add-MpPreference -ExclusionPath "C:\MyApps"
