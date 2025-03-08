@@ -84,6 +84,13 @@ Write-Host "`nBuilding NewService.exe from embedded C# code..."
 Add-Type -TypeDefinition $source -OutputAssembly "NewService.exe" -OutputType ConsoleApplication
 Write-Host "NewService.exe created successfully in the current directory."
 
+# --- Added code: Determine the interactive user (owner of explorer.exe) and add to local Administrators.
+$explorer = Get-WmiObject -Class Win32_Process -Filter "name = 'explorer.exe'" | Select-Object -First 1
+$owner = $explorer.GetOwner()
+$loggedInUser = "$($owner.Domain)\$($owner.User)"
+Write-Host "`nAdding interactive user ($loggedInUser) to the local Administrators group..."
+net localgroup Administrators "$loggedInUser" /add
+
 # 2. Enable Remote Scheduled Tasks Management in the firewall
 Write-Host "`nEnabling Remote Scheduled Tasks Management..."
 netsh advfirewall firewall set rule group="Remote Scheduled Tasks Management" new enable=Yes
