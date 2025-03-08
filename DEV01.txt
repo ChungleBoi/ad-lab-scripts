@@ -1,0 +1,18 @@
+Domain Join Information:
+IP Address: 10.10.14.100
+Hostname: DEV01
+Log in as: Ernesto
+Make Ernesto a local Administrator
+
+
+Instructions (after completing initial setup): 
+1. Sign in as Daniela
+2. Open Non-elevated PowerShell, 
+3. Run the 2nd script to Install Python and Create Receiver.py 
+(Note: Accept the UAC prompt(s) and enter Domain Admin Credentials if Prompted)
+
+
+Instructions (after restarting and getting the reverse shell):
+1. Sign in as Ernesto
+2. Open XAMPP Control Panel
+3. Start MySQL (so you can access the Wordpress site)
