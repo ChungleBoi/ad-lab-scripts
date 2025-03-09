@@ -1,16 +1,15 @@
+Instructions (before joining computer to domain): 
+- Fully Update System
+- Install VMWare Tools
+- Disable Tamper Protection
+- Set the Device to Never go to Sleep
+
+
 Domain Join Information:
 IP Address: 10.10.14.40
 Hostname: WEB02
 Log in as: ad\iis_service
 Make iis_service a local Administrator
-
-
-Instructions (before completing setup): 
-- Ensure the VM has at least 8 GB of RAM
-- Fully Update System
-- Install VMWare Tools
-- Disable Tamper Protection
-- Set the Device to Never go to Sleep
 
 
 Instructions (after completing setup): 
