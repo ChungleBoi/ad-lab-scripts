@@ -1,14 +1,14 @@
-Domain Join Information:
-IP Address: 10.10.14.80
-Hostname: MAIL01
-Log in as: Administrator
-
-
-Instructions (before completing setup): 
+Instructions (before joining computer to domain): 
 - Fully Update System
 - Install VMWare Tools
 - Disable Tamper Protection
 - Set the Device to Never go to Sleep
+
+
+Domain Join Information:
+IP Address: 10.10.14.80
+Hostname: MAIL01
+Log in as: Administrator
 
 
 Instructions (after completing setup):
