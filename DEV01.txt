@@ -5,6 +5,13 @@ Log in as: Ernesto
 Make Ernesto a local Administrator
 
 
+Instructions (before completing setup): 
+- Fully Update System
+- Install VMWare Tools
+- Disable Tamper Protection
+- Set the Device to Never go to Sleep
+
+
 Instructions (after completing initial setup): 
 1. Sign in as Daniela
 2. Open Non-elevated PowerShell, 
