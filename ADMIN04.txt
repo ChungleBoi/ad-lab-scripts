@@ -1,12 +1,12 @@
+Instructions (before joining computer to domain): 
+- Fully Update System
+- Install VMWare Tools
+- Disable Tamper Protection
+- Set the Device to Never go to Sleep
+
+
 Domain Join Information:
 IP Address: 10.10.14.120
 Hostname: ADMIN04
 Log in as: Francesca
 Make Francesca a local Administrator
-
-
-Instructions (before completing setup): 
-- Fully Update System
-- Install VMWare Tools
-- Disable Tamper Protection
-- Set the Device to Never go to Sleep
