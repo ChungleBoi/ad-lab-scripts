@@ -1,5 +1,5 @@
 Instructions (before completing setup):
-- Set up the Domain Controller (DC01) First
+- Set up the Domain Controller (DC01) first
 - Download Kali for VMWare here: https://www.kali.org/get-kali/#kali-virtual-machines
 - Fully Update and Fully Upgrade System
 - Set Memory to 4 GB, the Minimum required for Hashcat
