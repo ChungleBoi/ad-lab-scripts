@@ -1,0 +1,10 @@
+Domain Join Information:
+IP Address: 10.10.14.180
+Hostname: ADMIN01
+Log in as: Helen
+Make Helen a local Administrator
+
+
+Ensure these Defender exclusions are applied:
+Add-MpPreference -ExclusionPath 'C:\Users\Helen'
+Add-MpPreference -ExclusionPath 'C:\NewService'
