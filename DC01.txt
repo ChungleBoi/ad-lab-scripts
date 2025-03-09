@@ -1,0 +1,15 @@
+Instructions
+- Download and Install Windows Server 2025: https://www.microsoft.com/en-us/evalcenter/download-windows-server-2025
+- Fully Update System
+- Install VMWare Tools
+- Change the Network Adapter to VMNet1. Do not add a second network adapter.
+- Update Memory to 8 GB
+
+
+Instructions (before completing setup): 
+- Don't run setup script with sudo
+
+
+Instructions (after completing setup): 
+- Add a NAT network adapter as the second network adapter
+- Sync with an external time source
