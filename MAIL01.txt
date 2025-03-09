@@ -1,5 +1,5 @@
 Instructions (before joining computer to domain): 
-- Set up the Domain Controller (DC01) First
+- Set up the Domain Controller (DC01) first
 - Download and Install Windows Server 2022: https://www.microsoft.com/en-us/evalcenter/download-windows-server-2022
 - Fully Update System
 - Install VMWare Tools
