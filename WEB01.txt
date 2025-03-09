@@ -5,6 +5,13 @@ Log in as: ad\aaron
 Make Aaron a local administrator
 
 
+Instructions (before completing setup): 
+- Fully Update System
+- Install VMWare Tools
+- Disable Tamper Protection
+- Set the Device to Never go to Sleep
+
+
 Instructions (after completing setup):
 Start Apache and MySQL in XAMPP Control Panel
 
