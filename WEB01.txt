@@ -1,4 +1,5 @@
 Instructions (before joining computer to domain): 
+- Set up the Domain Controller (DC01) First
 - Download and Install Windows 11 Enterprise: https://www.microsoft.com/en-us/evalcenter/download-windows-11-enterprise
 - Fully Update System
 - Install VMWare Tools
