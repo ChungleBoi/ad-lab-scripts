@@ -1,0 +1,15 @@
+Domain Join Information:
+IP Address: 10.10.14.160
+Hostname: ADMIN02
+Log in as: Helen
+Make Helen a local Administrator
+
+
+Instructions (before completing setup):
+
+1. Create a Word Doc in Helen's home directory with this message:
+Use these credentials to log into ADMIN02. Note that remote logins are not allowed and will not work. You can only connect to ADMIN02 if you’re physically in the office.
+Helen
+chase#1
+
+2. Protect the Word Doc with a weak password (abc123)
