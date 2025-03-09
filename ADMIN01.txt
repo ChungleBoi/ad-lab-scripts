@@ -1,3 +1,10 @@
+Instructions (before joining computer to domain): 
+- Fully Update System
+- Install VMWare Tools
+- Disable Tamper Protection
+- Set the Device to Never go to Sleep
+
+
 Domain Join Information:
 IP Address: 10.10.14.180
 Hostname: ADMIN01
