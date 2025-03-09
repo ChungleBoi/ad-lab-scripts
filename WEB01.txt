@@ -1,15 +1,15 @@
+Instructions (before joining computer to domain): 
+- Fully Update System
+- Install VMWare Tools
+- Disable Tamper Protection
+- Set the Device to Never go to Sleep
+
+
 Domain Join Information:
 IP Address: 10.10.14.20
 Hostname: WEB01
 Log in as: ad\aaron
 Make Aaron a local administrator
-
-
-Instructions (before completing setup): 
-- Fully Update System
-- Install VMWare Tools
-- Disable Tamper Protection
-- Set the Device to Never go to Sleep
 
 
 Instructions (after completing setup):
