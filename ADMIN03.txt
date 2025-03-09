@@ -1,4 +1,4 @@
-Instructions (before joining to domain): 
+Instructions (before joining computer to domain): 
 - Fully Update System
 - Install VMWare Tools
 - Disable Tamper Protection
