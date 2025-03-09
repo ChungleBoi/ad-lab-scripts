@@ -1,8 +1,10 @@
 Instructions (before joining computer to domain): 
+- Download and Install Windows Server 2022: https://www.microsoft.com/en-us/evalcenter/download-windows-server-2022
 - Fully Update System
 - Install VMWare Tools
 - Disable Tamper Protection
 - Set the Device to Never go to Sleep
+- Change the Network Adapter to VMNet1 and add a NAT Adapter as the second adapter
 
 
 Domain Join Information:
