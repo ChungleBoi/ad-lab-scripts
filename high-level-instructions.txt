@@ -1,0 +1,37 @@
+Step 1: Initialize Domain Controller
+
+Step 2: Initialize Kali
+
+Step 3: Join Member Workstations to the Domain using domain-join.ps1 PowerShell script
+
+Computer names and corresponding host IP:
+FILES01 - 10.10.14.200
+ADMIN01 - 10.10.14.180
+ADMIN02 - 10.10.14.160
+ADMIN03 - 10.10.14.140
+ADMIN04 - 10.10.14.120
+DEV01 - 10.10.14.100
+MAIL01 - 10.10.14.80
+DMZ01 - 10.10.14.60
+WEB02 - 10.10.14.40
+WEB01 - 10.10.14.20
+
+Users and corresponding password:
+Aaron: tt.r.2006"
+Betty: pinky.1995"
+Chris: abcABC123!@#"
+Daniela: c/o2010"
+Ernesto: lucky#1"
+Francesca: bubbelinbunny_1"
+Gregory: mc_monkey_1"
+Helen: chase#1"
+Issac: passw0rd!!"
+Jamie: digital99.3"
+iis_service: daisy_3
+
+
+Step 4: Set up Attack Boxes using their PowerShell scripts
+(Note: Read the about.txt file for setup information) 
+
+
+Phase 5: Complete the post-setup steps, in the about.txt file, if applicable.
