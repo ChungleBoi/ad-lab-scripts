@@ -6,10 +6,9 @@ Instructions
 - Update Memory to 8 GB
 
 
-Instructions (before completing setup): 
-- Don't run setup script with sudo
-
-
 Instructions (after completing setup): 
 - Add a NAT network adapter as the second network adapter
 - Sync with an external time source
+
+
+Important: Make sure the domain controller (DC01) is always running, when performing actions on the clients (member workstations)
