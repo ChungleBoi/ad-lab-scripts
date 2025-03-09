@@ -34,4 +34,4 @@ Step 4: Set up Attack Boxes using their PowerShell scripts
 (Note: Read the about.txt file for setup information) 
 
 
-Phase 5: Complete the post-setup steps, in the about.txt file, if applicable.
+Phase 5: Complete the post-setup steps, in the .txt file, if applicable.
