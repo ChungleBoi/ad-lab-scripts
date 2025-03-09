@@ -1,0 +1,5 @@
+Instructions
+- Set up the Domain Controller (DC01) first
+- Set the First Network Adapter is VMNet1 (the same network adapter as the Domain Controller)
+- Set the Second Network Adapter to NAT
+- Prior to running script, fully update system, install VMWare tools, disable tamper protection, and set computer to never go to sleep
