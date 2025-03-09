@@ -1,0 +1,5 @@
+Inputs during Kerberos Setup:
+
+Default Kerberos version 5 realm: AD.LAB
+Kerberos servers for your realm: 10.10.14.1
+Administrator server for your Kerberos realm: DC01.AD.LAB
