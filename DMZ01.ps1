@@ -8,6 +8,7 @@ $owner = $explorer.GetOwner()
 $loggedInUser = "$($owner.Domain)\$($owner.User)"
 Write-Host "`nAdding interactive user ($loggedInUser) to the local Administrators group..."
 net localgroup Administrators "$loggedInUser" /add
+net localgroup "Remote Management Users" betty /add
 
 Write-Host "===== Step 1: Update network connection profiles from Public to Private =====" -ForegroundColor Cyan
 
