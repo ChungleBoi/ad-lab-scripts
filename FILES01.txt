@@ -1,9 +1,10 @@
 Instructions (before joining computer to domain): 
+- Download and Install Windows 11 Enterprise: https://www.microsoft.com/en-us/evalcenter/download-windows-11-enterprise
 - Fully Update System
 - Install VMWare Tools
 - Disable Tamper Protection
 - Set the Device to Never go to Sleep
-
+- Change the Network Adapter to Host-Only and add a NAT Adapter as the second adapter
 
 Domain Join Information:
 IP Address: 10.10.14.200
