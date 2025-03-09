@@ -6,6 +6,7 @@ Instructions (before joining computer to domain):
 - Set the Device to Never go to Sleep
 - Change the Network Adapter to Host-Only and add a NAT Adapter as the second adapter
 
+
 Domain Join Information:
 IP Address: 10.10.14.200
 Hostname: FILES01
