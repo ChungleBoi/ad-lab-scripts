@@ -16,3 +16,7 @@ Instructions (after restarting and getting the reverse shell):
 1. Sign in as Ernesto
 2. Open XAMPP Control Panel
 3. Start MySQL (so you can access the Wordpress site)
+
+
+Ensure this Defender exclusion is applied:
+Add-MpPreference -ExclusionPath "C:\MyService"
