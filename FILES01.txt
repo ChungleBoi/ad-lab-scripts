@@ -1,0 +1,5 @@
+Domain Join Information:
+IP Address: 10.10.14.200
+Hostname: FILES01
+Log in as: Issac
+Make Issac a local Administrator
