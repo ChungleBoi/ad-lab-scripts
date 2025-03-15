@@ -15,6 +15,5 @@ Log in as: Helen
 Make Helen a local Administrator
 
 
-Ensure these Defender exclusions are applied:
+Ensure this Defender exclusions is applied:
 Add-MpPreference -ExclusionPath 'C:\Users\Helen'
-Add-MpPreference -ExclusionPath 'C:\NewService'
