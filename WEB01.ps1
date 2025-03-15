@@ -42,29 +42,32 @@ b. Click 'Databases' in the phpMyAdmin window.
 c. Type 'login_system' in the text entry box and click 'Create'."
 
 # ------------------- Step 7: Create the Users Table -------------------
-Confirm-ManualStep "Create the Users table by running the following SQL query in phpMyAdmin:
-CREATE TABLE users (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    username VARCHAR(50) NOT NULL UNIQUE,
-    password VARCHAR(255) NOT NULL
-);
-Instructions:
+Write-Host "`nStep 7: Create the Users table by running the following SQL query in phpMyAdmin:"
+Write-Host "  CREATE TABLE users (" -ForegroundColor Cyan
+Write-Host "      id INT AUTO_INCREMENT PRIMARY KEY," -ForegroundColor Cyan
+Write-Host "      username VARCHAR(50) NOT NULL UNIQUE," -ForegroundColor Cyan
+Write-Host "      password VARCHAR(255) NOT NULL" -ForegroundColor Cyan
+Write-Host "  );" -ForegroundColor Cyan
+
+Confirm-ManualStep "Instructions:
   a. Click 'Query'
   b. Paste the above query into the code editor
   c. Click 'Submit Query' to execute the query."
 
 # ------------------- Step 8: Add a User to the Table -------------------
-Confirm-ManualStep "Add a user to the table by running the following SQL query in phpMyAdmin:
-INSERT INTO users (username, password)
-VALUES ('mysql', MD5('MySQLPassword123'));
-Instructions:
+Write-Host "`nStep 8: Add a user to the table by running the following SQL query in phpMyAdmin:"
+Write-Host "  INSERT INTO users (username, password)" -ForegroundColor Cyan
+Write-Host "  VALUES ('mysql', MD5('MySQLPassword123'));" -ForegroundColor Cyan
+
+Confirm-ManualStep "Instructions:
   a. Paste the above query into the code editor
   b. Click 'Submit Query' to execute the query."
 
 # ------------------- Step 9: Update the Root User's Password -------------------
-Confirm-ManualStep "Update the Root user's password by running the following SQL query in phpMyAdmin:
-ALTER USER 'root'@'localhost' IDENTIFIED BY 'tt.r.2006';
-Instructions:
+Write-Host "`nStep 9: Update the Root user's password by running the following SQL query in phpMyAdmin:"
+Write-Host "  ALTER USER 'root'@'localhost' IDENTIFIED BY 'tt.r.2006';" -ForegroundColor Cyan
+
+Confirm-ManualStep "Instructions:
   a. Paste the above query into the code editor
   b. Click 'Submit Query' to execute the query."
 
