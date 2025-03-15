@@ -112,18 +112,14 @@ Write-Host "`nCreating 'C:\NewService' folder and copying NewService.exe..."
 New-Item -Path "C:\NewService" -ItemType Directory -Force | Out-Null
 Copy-Item -Path ".\NewService.exe" -Destination "C:\NewService" -Force
 
-# 6. Add a Windows Defender exclusion for 'C:\NewService'
-Write-Host "`nAdding Defender exclusion for 'C:\NewService'..."
-Add-MpPreference -ExclusionPath 'C:\NewService'
-
-# 7. Create the NewService service on ADMIN01, running as AD.LAB\Jamie
+# 6. Create the NewService service on ADMIN01, running as AD.LAB\Jamie
 Write-Host "`nCreating the 'NewService' service on ADMIN01..."
 sc.exe \\ADMIN01 create NewService binPath= "C:\NewService\NewService.exe" obj= "AD.LAB\Jamie" password= "digital99.3"
 
 Write-Host "`nChecking NewService configuration..."
 sc.exe \\ADMIN01 qc NewService
 
-# 8. Grant 'Log on as a service' right to AD.LAB\Jamie via secedit (using Start-Process -Wait).
+# 7. Grant 'Log on as a service' right to AD.LAB\Jamie via secedit (using Start-Process -Wait).
 function Grant-LogonAsServiceRight($account) {
     $tempDir  = "C:\Temp"
     $cfgFile  = Join-Path $tempDir "LogonAsService.inf"
@@ -169,7 +165,7 @@ function Grant-LogonAsServiceRight($account) {
 Write-Host "`nGranting 'Log on as a service' right to AD.LAB\Jamie..."
 Grant-LogonAsServiceRight "AD.LAB\Jamie"
 
-# 9. Start the new service and show any service.log
+# 8. Start the new service and show any service.log
 Write-Host "`nStarting 'NewService' on ADMIN01..."
 sc.exe \\ADMIN01 start NewService
 
