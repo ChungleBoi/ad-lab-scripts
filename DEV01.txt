@@ -17,9 +17,11 @@ Make Ernesto a local Administrator
 
 Instructions (after completing initial setup): 
 1. Sign in as Daniela
-2. Open Non-elevated PowerShell, 
-3. Run the 2nd script to Install Python and Create Receiver.py 
-(Note: Accept the UAC prompt(s) and enter Domain Admin Credentials if Prompted)
+2. Open Non-elevated PowerShell session
+3. Run the 2nd script and follow the instructions to install Python
+4. Close the PowerShell window. Open a new un-elevated PowerShell session and confirm python/pip installation
+5. Run the 2nd script again to create Receiver.py 
+6. Run receiver.py and enter Domain Admin credentials in the UAC Prompt
 
 
 Instructions (after restarting and getting the reverse shell):
