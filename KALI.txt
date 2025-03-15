@@ -1,8 +1,27 @@
 Instructions (before completing setup):
-- Set up the Domain Controller (DC01) first
+- Fully Set up the Domain Controller (DC01) first
 - Download Kali for VMWare here: https://www.kali.org/get-kali/#kali-virtual-machines
+- Set Memory to 4 GB (the Minimum required for Hashcat)
 - Fully Update and Fully Upgrade System
-- Set Memory to 4 GB, the Minimum required for Hashcat
+- Create the Instructions.docx on your Host and transfer it to Kali home directory
+      1. Open Virtual Network Editor in VMWare
+            - Click "Change Settings" and confirm the UAC Prompt
+            - Change Bridged Adapter Connection to - Your Ethernet Controller (This will allow file sharing between Kali and your host.)
+      2. Set Up and Start a Samba Share in Kali
+            - Create /etc/samba/smb.conf with these contents: [samba] path = /home/kali/samba browsable = yes writable = yes guest ok = yes read only = no create mask = 0664 directory mask = 0775
+            - Create the "samba" directory (used by the samba service) with this command: mkdir /home/kali/samba
+            - Create a Samba user with this command: sudo smbpasswd -a kali
+            - Restart Samba with this command: sudo systemctl restart smbd
+      3. Connect to the Samba Share from your Windows Host
+            - PowerShell command: net use \\Your Kali IP\samba /user:kali kali
+            - Note: If this does not work, confirm you have an ethernet cable connected, and your Kali IP is on the same subnet as your host IP. You can also ping Kali to test connectivity.
+      4. Create Instructions.docx
+            - Create a Word Doc on your Host with this message: Use these credentials to log into ADMIN02. Note that remote logins are not allowed and will not work. You can only connect to ADMIN02 if you’re physically in the office. Helen chase#1
+            - Protect the Word Doc with a weak password (abc123)
+      5. Copy Instructions.docx to your Samba Share
+            - PowerShell command: copy Instructions.docx \\Your Kali IP\samba
+      6. Copy Instructions.docx from the Samba Share to Kali Home Directory 
+            - Bash command: cp samba/Instructions.docx /home/kali/
 
 
 Instructions (while completing setup):
@@ -14,7 +33,7 @@ Instructions (while completing setup):
 
 
 Instructions (after completing initial setup): 
-1. Set the Network Adapter to Host Only
+1. Set the Network Adapter to Custom (VMnet1)
 
 2. Set a Static IP Address:
 ┌──(kali㉿kali)-[~]
@@ -41,3 +60,105 @@ iface eth0 inet static
 # search localdomain
 # nameserver 192.168.207.1
 nameserver 10.10.14.1
+
+4. Perform nslookup on the domain controller
+┌──(kali㉿kali)-[~]
+└─$ nslookup dc01.ad.lab
+Server:         10.10.14.1
+Address:        10.10.14.1#53
+
+Name:   dc01.ad.lab
+Address: 10.10.14.1
+Name:   dc01.ad.lab
+Address: 192.168.0.44
+
+5. Use Netcat to Check Kerberos Connectivity
+┌──(kali㉿kali)-[~]
+└─$ nc -zv 10.10.14.1 88
+10.10.14.1: inverse host lookup failed: Unknown host
+(UNKNOWN) [10.10.14.1] 88 (kerberos) open
+24. Checked LDAP over SSL with OpenSSL
+
+6. Use OpenSSL to Confirm we can make Kerberos Requests 
+┌──(kali㉿kali)-[~]
+└─$ openssl s_client -connect 10.10.14.1:636 -showcerts
+Connecting to 10.10.14.1
+CONNECTED(00000003)
+Can't use SSL_get_servername
+depth=0 CN=dc01.ad.lab
+verify error:num=18:self-signed certificate
+verify return:1
+depth=0 CN=dc01.ad.lab
+verify return:1
+---
+Certificate chain
+ 0 s:CN=dc01.ad.lab
+   i:CN=dc01.ad.lab
+   a:PKEY: rsaEncryption, 2048 (bit); sigalg: RSA-SHA1
+   v:NotBefore: Jan 11 04:53:00 2025 GMT; NotAfter: Jan 11 05:13:00 2026 GMT
+-----BEGIN CERTIFICATE-----
+MIIDHjCCAgagAwIBAgIQdr7jtkfuv7hMjeNAUbDx4TANBgkqhkiG9w0BAQUFADAW
+MRQwEgYDVQQDDAtkYzAxLmFkLmxhYjAeFw0yNTAxMTEwNDUzMDBaFw0yNjAxMTEw
+NTEzMDBaMBYxFDASBgNVBAMMC2RjMDEuYWQubGFiMIIBIjANBgkqhkiG9w0BAQEF
+AAOCAQ8AMIIBCgKCAQEA6EMcrpWhyhUk2qNE5pxxo6zE0luzVfuUqK/p6blRRU2T
+vFiFexlawAsajm6TWtj6gqNLrxmmU0D6KGKjcjWpYjyeXqFvIeJgCgVhzfpKVTmf
+ByjzPLiJ6o+EcPmqEC1Fkim5x4bTL9MnGD5OVRCxlbNyLE/7y9G3o1fiqfvsv2cu
+OkK4n9PJ9U0nw/M2XD1+EKf/KICD5j4tKpH2VSiWQjs1GcORV6T1wq6fVXXP0Wg9
+ALYJCwd/kStgcbZEFZNUvR53RpakCCZs71a8hxKwK1vT3T+uCgUJ5QpnZC5V/YBt
+g5D5FUiWC6vkwLKJxMjWjq/OfxIzEBjtK1e86dyAWQIDAQABo2gwZjAOBgNVHQ8B
+Af8EBAMCBaAwFgYDVR0RBA8wDYILZGMwMS5hZC5sYWIwHQYDVR0lBBYwFAYIKwYB
+BQUHAwEGCCsGAQUFBwMCMB0GA1UdDgQWBBTwtFAlr2t1mDqiLclhaUgQu5PPSjAN
+BgkqhkiG9w0BAQUFAAOCAQEAklNOlSxZAXLbg8NgrYuRgCThEhYDrRuoJ8EwFEWC
+YzVSLKpuh/hPZ5XLg5hUQTb6emz2k2Ws0nec3YWEPaDmy33MobefW8TDHfkqLXwu
+MRq3jpYLvpEYrIrM+hQBzpKlrl7fjQJEL7E/cW58Aehql6k/e3rqKYDVPvyJdVcV
+8jfE1eSpAc7Af2EQjWS5O17qgeG6g3b0mOB009Ba6NWsgF/BMGPJyQsxtpSN22/c
+xGEJ3CidmxmFxzcxVRnR8nSAtHR01qdG8RNW77TL2jwNdeV1JmY355AHuT6xcjZD
+WYW3lnCpx9dbuD0FItxjbR6CWSx4Qrn1k15whYpA8EzbWg==
+-----END CERTIFICATE-----
+---
+Server certificate
+subject=CN=dc01.ad.lab
+issuer=CN=dc01.ad.lab
+---
+No client certificate CA names sent
+Requested Signature Algorithms: RSA-PSS+SHA256:RSA-PSS+SHA384:RSA-PSS+SHA512:RSA+SHA256:RSA+SHA384:RSA+SHA1:ECDSA+SHA256:ECDSA+SHA384:ECDSA+SHA1:DSA+SHA1:RSA+SHA512:ECDSA+SHA512
+Shared Requested Signature Algorithms: RSA-PSS+SHA256:RSA-PSS+SHA384:RSA-PSS+SHA512:RSA+SHA256:RSA+SHA384:ECDSA+SHA256:ECDSA+SHA384:RSA+SHA512:ECDSA+SHA512
+Peer signing digest: SHA256
+Peer signature type: RSA-PSS
+Server Temp Key: X25519, 253 bits
+---
+SSL handshake has read 1329 bytes and written 548 bytes
+Verification error: self-signed certificate
+---
+New, TLSv1.3, Cipher is TLS_AES_256_GCM_SHA384
+Server public key is 2048 bit
+This TLS version forbids renegotiation.
+Compression: NONE
+Expansion: NONE
+No ALPN negotiated
+Early data was not sent
+Verify return code: 18 (self-signed certificate)
+---
+---
+Post-Handshake New Session Ticket arrived:
+SSL-Session:
+    Protocol  : TLSv1.3
+    Cipher    : TLS_AES_256_GCM_SHA384
+    Session-ID: 7484492FF13316A68B71754CE967E0A042E2BE79E1C5C90F62076486DB92A2AC
+    Session-ID-ctx:
+    Resumption PSK: 0B4240C446C99950107DABE57E8ED4B95D2B8BBE844B4239348239E9D3DF23F9ABA70416564C9F030C7DE08FD2A809D5
+    PSK identity: None
+    PSK identity hint: None
+    SRP username: None
+    TLS session ticket lifetime hint: 36000 (seconds)
+    TLS session ticket:
+    0000 - 13 46 00 00 a2 eb 47 76-f0 e7 66 95 31 6d 18 93   .F....Gv..f.1m..
+    0010 - 93 8a 04 b7 cd dc b5 8e-85 f5 5b 4d d1 53 36 83   ..........[M.S6.
+
+    Start Time: 1736813116
+    Timeout   : 7200 (sec)
+    Verify return code: 18 (self-signed certificate)
+    Extended master secret: no
+    Max Early Data: 0
+---
+read R BLOCK
