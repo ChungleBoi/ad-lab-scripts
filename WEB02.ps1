@@ -198,7 +198,7 @@ New-NetFirewallRule -DisplayName "Open Port 80" -Direction Inbound -Protocol TCP
 
 # Step 17: Set IIS Default Application Pool Identity
 Write-Host (@"
-In IIS Manager:
+Open IIS Manager:
 a. Expand "WEB02 (AD\iis_service)", click "Application Pools"
 b. Right-click "DefaultAppPool", choose "Advanced Settings"
 c. Under "Process Model", click the three dots next to "Identity"
