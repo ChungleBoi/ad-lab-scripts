@@ -1,6 +1,7 @@
 Instructions (before joining computer to domain): 
 - Set up the Domain Controller (DC01) first
 - Download and Install Windows 11 Enterprise: https://www.microsoft.com/en-us/evalcenter/download-windows-11-enterprise
+- Set the Username to "LocalUser" and the Password to "password123!!"
 - Fully Update System
 - Install VMWare Tools
 - Disable Tamper Protection
