@@ -1,6 +1,7 @@
 Instructions (before joining computer to domain): 
 - Set up the Domain Controller (DC01) first
 - Download and Install Windows Server 2022: https://www.microsoft.com/en-us/evalcenter/download-windows-server-2022
+- Set the Password for the Local Administrator account to: "password123!!"
 - Fully Update System
 - Install VMWare Tools
 - Disable Tamper Protection
@@ -15,8 +16,8 @@ Log in as: Administrator (Local Account)
 
 
 Instructions (before completing setup):
-Make sure to run the correct PowerShell script, to set up the VM. 
-(Not the script that was used to join the computer to the domain, which is in the same directory).
+- Make sure to run the correct PowerShell script, to set up the VM. (Not the script that was used to join the computer to the domain, which is in the same directory).
+- Change the username in the domain-join.ps1 script, to "Administrator"
 
 
 Instructions (after completing setup):
