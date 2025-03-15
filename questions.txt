@@ -1,0 +1,19 @@
+Questions:
+
+
+WEB02: Before getting NT Authority, are we able to check the MP preference to see which directories have an exclusion? Are we able to set an exclusion?
+
+
+DMZ01: Before getting NT Authority, are we able to read Chris' PowerShell history file?
+
+
+
+
+
+Root Folder - pentest-report.txt quarantined by Windows Defender
+
+
+Make sure Windows Security is initialized before running the script
+
+
+Reverse shell base64 encoded payload generators - make sure you're using the correct one based on the command being used
