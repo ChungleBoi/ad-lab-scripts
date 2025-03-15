@@ -11,4 +11,6 @@ Instructions (after completing setup):
 - Sync with an external time source
 
 
-Important: Make sure the domain controller (DC01) is always running, when performing actions on the clients (member workstations)
+Important: 
+1. Continue running the script after reboots, until the setup is complete.
+2. Make sure the domain controller (DC01) is always running, when performing actions on the clients (member workstations)
