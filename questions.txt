@@ -17,3 +17,6 @@ Make sure Windows Security is initialized before running the script
 
 
 Reverse shell base64 encoded payload generators - make sure you're using the correct one based on the command being used
+
+
+Change: Current checkpoint is: 10 (at the end of the DC01 script)
