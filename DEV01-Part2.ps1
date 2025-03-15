@@ -2,7 +2,7 @@
 Write-Host "Before proceeding, please complete the following manual steps:"
 Write-Host "1. Download Python from: https://www.python.org/downloads/ by clicking 'Download Python 3.13.2'."
 Write-Host "2. Double-click the installer, check 'Add python.exe to PATH', and click 'Install Now'."
-Write-Host "3. Close and reopen an unelevated PowerShell session."
+Write-Host "3. Once the installation is complete, close the PowerShell window, and reopen a new Non-Elevated PowerShell session."
 
 # Immediately check if Python is properly installed by verifying its version string.
 try {
