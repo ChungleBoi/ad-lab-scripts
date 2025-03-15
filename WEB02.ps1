@@ -50,7 +50,8 @@ e. Click "Next" until "Feature Selection"; select "Database Engine Services"
 f. Click "Next" until "Server Configuration"
 g. Set "Startup Type" to "Automatic" for "SQL Server Agent", "SQL Server Database Engine", and "SQL Server Browser", then click "Next"
 h. On "Database Engine Configuration":
-   - Select "Mixed Mode", set a Password.
+   - Select "Mixed Mode"
+   - Set the SQL Administrator account password to "Password123"
    - Under "Specify SQL Server administrators" click "Add Current User" to add iis_service.
    - Click "Next" and "Install" to finish.
 "@) -ForegroundColor Cyan
