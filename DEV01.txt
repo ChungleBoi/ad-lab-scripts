@@ -22,7 +22,7 @@ Instructions (after completing initial setup):
 3. Run DEV01-Part2.ps1 and follow the instructions to install Python
 4. Close the PowerShell window. 
 5. Open a new Non-elevated PowerShell session and confirm python/pip installation
-6. Run the 2nd script again to create Receiver.py 
+6. Run the DEV01-Part2.ps1 again to create Receiver.py 
 7. Run receiver.py and enter Domain Admin credentials in the UAC Prompt
 
 
