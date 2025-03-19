@@ -22,8 +22,9 @@ Instructions (after completing initial setup):
 3. Run DEV01-Part2.ps1 and follow the instructions to install Python
 4. Close the PowerShell window. 
 5. Open a new Non-elevated PowerShell session and confirm python/pip installation
-6. Run the DEV01-Part2.ps1 again to create Receiver.py 
-7. Run receiver.py and enter Domain Admin credentials in the UAC Prompt
+6. Run DEV01-Part2.ps1 again. 
+7. Enter 10.10.14.100 as the listening IP, to create receiver.py 
+8. Run receiver.py and enter Domain Admin credentials in the UAC Prompt
 
 
 Instructions (after restarting and getting the reverse shell):
