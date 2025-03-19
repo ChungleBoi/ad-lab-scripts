@@ -20,3 +20,85 @@ Reverse shell base64 encoded payload generators - make sure you're using the cor
 
 
 Change: Current checkpoint is: 10 (at the end of the DC01 script)
+
+
+
+
+Final Updates
+
+When creating the new virtual machine, set the encryption password to password123!!
+In the Virtual Machine Settings, Under "Device status", enable "Connect at power on" (you have to do this for each OS).
+password123!! for the local account, not BackupPassword123
+Password123 as the SA Administrator for WEB02
+Restart WEB02 through SSMS when prompted and run the script again after it reboots. If the SQL commands fail to run, give SSMS some more time to startup.
+ - Add "Negotiate:Kerberos" and click "OK"
+
+
+DMZ01 - The only script where it didn't save the MpPreference. Is the MpPreference set before the directory is created? (Check order of operations)
+
+DEV01 - If Apache/MySQL can't be started, reboot.
+Add a checkpoint in this script, so if MyService is already created and the permissions are already set (if Step 7 is complete) it will start with the manual step (Install XAMPP for Windows)
+
+
+Change DC01 Network Adapter to VMNet1 AFTER updates are complete, before running script
+
+
+MAIL01 signed in as Daniela. Didn't use local Administrator account.
+- Change the username in the domain-join.ps1 script, to "Administrator". Is this needed?
+
+
+
+PS C:\Users\LocalUser> .\script.ps1
+Enter the desired computer name: ADMIN04
+Enter the new IP address: 10.10.14.120
+Have you disabled Tamper Protection in Windows Security? (Y/N)
+Y
+
+==> Creating Credential Objects...
+
+==> Configuring network settings for 'Ethernet0'...
+
+==> Assigning Static IP: 10.10.14.120, Gateway: 10.10.14.1, DNS: 10.10.14.1...
+
+
+IPAddress         : 10.10.14.120
+InterfaceIndex    : 4
+InterfaceAlias    : Ethernet0
+AddressFamily     : IPv4
+Type              : Unicast
+PrefixLength      : 24
+PrefixOrigin      : Manual
+SuffixOrigin      : Manual
+AddressState      : Tentative
+ValidLifetime     :
+PreferredLifetime :
+SkipAsSource      : False
+PolicyStore       : ActiveStore
+
+IPAddress         : 10.10.14.120
+InterfaceIndex    : 4
+InterfaceAlias    : Ethernet0
+AddressFamily     : IPv4
+Type              : Unicast
+PrefixLength      : 24
+PrefixOrigin      : Manual
+SuffixOrigin      : Manual
+AddressState      : Invalid
+ValidLifetime     :
+PreferredLifetime :
+SkipAsSource      : False
+PolicyStore       : PersistentStore
+
+
+==> Waiting for network to stabilize...
+
+==> Checking connectivity to Domain Controller 'dc01.ad.lab'...
+
+==> Checking DNS resolution for Domain 'AD.LAB'...
+DNS Resolution Successful:
+
+==> Checking if computer name is already 'ADMIN04'...
+Skipping rename - It's already 'ADMIN04'.
+
+==> Joining Domain 'AD.LAB' using 'AD.LAB\Administrator' with name 'ADMIN04'...
+ERROR joining domain: Skip computer 'ADMIN04' with new name 'ADMIN04' because the new name is the same as the current name.
