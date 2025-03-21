@@ -7,16 +7,12 @@ WEB02: Before getting NT Authority, are we able to check the MP preference to se
 DMZ01: Before getting NT Authority, are we able to read Chris' PowerShell history file?
 
 
-
-
 Root Folder - pentest-report.txt quarantined by Windows Defender
 
 
 Make sure Windows Security is initialized before running the script
 
-
-Reverse shell base64 encoded payload generators - make sure you're using the correct one based on the command being used
-
+Make sure in the penetration testing report, you change directory to the intended directory, before creating the msfvenom payload. Make sure the python3 http server is started immediately after creating the payload.
 
 
 -------------------------------
@@ -48,10 +44,18 @@ DEV01 script:
 DEV01:
 Add to the penetration testing report the command used to determine that C:\MyService\program.exe is vulnerable.
 
+ADMIN04:
 
+ADMIN01:
+Change Port 443 to 4451
+Change Port 444 to 4452
 
+Use the correct payload for the reverse shell generator
+powershell.exe -NoP -NonI -ExecutionPolicy Bypass -EncodedCommand
+not
+powershell -nop -w hidden -e
 
-
+encode4449.py should be changed
 
 
 
