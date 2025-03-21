@@ -16,6 +16,10 @@ Log in as: ad\iis_service
 Make iis_service a local Administrator
 
 
+Instructions (while completing setup):
+Continue running the script after the restart, until the setup is complete.
+
+
 Instructions (after completing setup): 
 Sign in as Betty to cache a domain credential
 
