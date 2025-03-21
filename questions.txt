@@ -32,14 +32,8 @@ DEV01 script:
 2. Reboot DEV01 and confirm the wordpress database is accessible.
 (If Apache/MySQL can't be started, reboot.)
 
-DEV01:
-Add to the penetration testing report the command used to determine that C:\MyService\program.exe is vulnerable.
 
 ADMIN04:
-
-ADMIN01:
-Change Port 443 to 4451
-Change Port 444 to 4452
 
 Use the correct payload for the reverse shell generator
 powershell.exe -NoP -NonI -ExecutionPolicy Bypass -EncodedCommand
@@ -49,6 +43,9 @@ powershell -nop -w hidden -e
 encode4449.py should be changed
 
 
+ADMIN01:
+Change Port 443 to 4451
+Change Port 444 to 4452
 
 
 
