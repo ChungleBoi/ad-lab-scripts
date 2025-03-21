@@ -31,14 +31,6 @@ Change: Current checkpoint is: 10 (at the end of the DC01 script.) Instead say "
 MAIL01 script:
 Add the instruction to open server manager.
 
-WEB02 script:
-Restart WEB02 through SSMS when prompted and run the script again after it reboots. If the SQL commands fail to run, give SSMS some more time to startup.
- - Add "Negotiate:Kerberos" and click "OK"
-
-WEB02:
-Password123 as the SA Administrator for WEB02
-
-
 DEV01 script:
 1. Add a checkpoint in this script, so if MyService is already created and the permissions are already set (if Step 7 is complete) it will start with the manual step (Install XAMPP for Windows)
 2. Reboot DEV01 and confirm the wordpress database is accessible.
