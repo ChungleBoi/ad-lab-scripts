@@ -45,6 +45,9 @@ DEV01 script:
 2. Reboot DEV01 and confirm the wordpress database is accessible.
 (If Apache/MySQL can't be started, reboot.)
 
+DEV01:
+Add to the penetration testing report the command used to determine that C:\MyService\program.exe is vulnerable.
+
 
 
 
