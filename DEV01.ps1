@@ -438,12 +438,13 @@ Ensure that:
 
 Write-Host "Deployment script completed."
 
-# ------------------- Step 23: Disable Apache at boot and kill it -------------------
+# ------------------- Step 23: Disable Apache -----------------------------
 Write-Host "Disabling Apache service so it won't start when the computer boots..."
 sc.exe config "Apache2.4" start= demand
 
+# ------------------- Step 24: Stop MySQL and Apache -----------------------------
+Write-Host "Attempting to stop MySQL service..."
+Get-Process mysqld | Stop-Process -Force -ErrorAction SilentlyContinue
+
 Write-Host "Attempting to stop Apache service..."
 Stop-Service -Name "Apache2.4" -Force -ErrorAction SilentlyContinue
-
-Write-Host "Killing any remaining Apache processes (httpd.exe)..."
-taskkill /F /IM httpd.exe /T
