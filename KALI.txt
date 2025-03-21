@@ -1,9 +1,9 @@
 Instructions (before completing setup):
 - Fully Set up the Domain Controller (DC01) first
 - Download Kali for VMWare here: https://www.kali.org/get-kali/#kali-virtual-machines
-- Set Memory to 4 GB (the Minimum required for Hashcat)
+- Increase Memory to 4 GB (the Minimum required for Hashcat)
 - Fully Update and Fully Upgrade System
-- Create the Instructions.docx on your Host and transfer it to Kali home directory
+- Create Instructions.docx on your Host and transfer it to Kali home directory
       1. Open Virtual Network Editor in VMWare
             - Click "Change Settings" and confirm the UAC Prompt
             - Change Bridged Adapter Connection to - Your Ethernet Controller (This will allow file sharing between Kali and your host.)
@@ -21,7 +21,8 @@ Instructions (before completing setup):
       5. Copy Instructions.docx to your Samba Share
             - PowerShell command: copy Instructions.docx \\Your Kali IP\samba
       6. Copy Instructions.docx from the Samba Share to Kali Home Directory 
-            - Bash command: cp samba/Instructions.docx /home/kali/
+            - Bash command: mv samba/Instructions.docx /home/kali/
+      7. Delete Instructions.docx in Kali (once it has been uploaded to ADMIN02).
 
 
 Instructions (while completing setup):
