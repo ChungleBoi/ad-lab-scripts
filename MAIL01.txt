@@ -12,12 +12,8 @@ Instructions (before joining computer to domain):
 Domain Join Information:
 IP Address: 10.10.14.80
 Hostname: MAIL01
-Log in as: Administrator (Local Account)
-
-
-Instructions (before completing setup):
-- Make sure to run the correct PowerShell script, to set up the VM. (Not the script that was used to join the computer to the domain, which is in the same directory).
-- Change the username in the domain-join.ps1 script, to "Administrator"
+Log in as: Daniela
+Make Daniela a local Administrator
 
 
 Instructions (after completing setup):
