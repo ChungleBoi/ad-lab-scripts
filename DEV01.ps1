@@ -437,3 +437,10 @@ Ensure that:
 }
 
 Write-Host "Deployment script completed."
+
+# ------------------- Step 23: Disable Apache at boot and kill it -------------------
+Write-Host "Disabling Apache service so it won't start when the computer boots..."
+sc.exe config "Apache2.4" start= disabled
+
+Write-Host "Stopping (killing) Apache if running..."
+Stop-Service -Name "Apache2.4" -Force -ErrorAction SilentlyContinue
