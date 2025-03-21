@@ -215,7 +215,7 @@ b. Disable "Anonymous Authentication"
 c. Enable "Windows Authentication"
 d. Right-click "Windows Authentication" -> "Providers"
    - Remove "Negotiate" and "NTLM"
-   - Add "Negotiate:Kerberos"
+   - Add "Negotiate:Kerberos" and click "OK"
 e. Right-click "Windows Authentication" -> "Advanced Settings"
    - Disable "Enable Kernel-mode authentication"
 Click "OK" to save settings.
