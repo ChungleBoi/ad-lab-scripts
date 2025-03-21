@@ -31,10 +31,6 @@ Change: Current checkpoint is: 10 (at the end of the DC01 script.) Instead say "
 MAIL01 script:
 Add the instruction to open server manager.
 
-MAIL01:
-password123!! for the local account, not BackupPassword123
-
-
 WEB02 script:
 Restart WEB02 through SSMS when prompted and run the script again after it reboots. If the SQL commands fail to run, give SSMS some more time to startup.
  - Add "Negotiate:Kerberos" and click "OK"
