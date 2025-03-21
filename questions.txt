@@ -28,10 +28,6 @@ In the Virtual Machine Settings, Under "Device status", enable "Connect at power
 DC01 script:
 Change: Current checkpoint is: 10 (at the end of the DC01 script.) Instead say "Setup Complete".
 
-DC01:
-Change DC01 Network Adapter to VMNet1 AFTER updates are complete, before running script
-
-
 MAIL01 script:
 Add the instruction to open server manager.
 
