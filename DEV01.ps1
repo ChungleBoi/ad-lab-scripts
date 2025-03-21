@@ -440,7 +440,10 @@ Write-Host "Deployment script completed."
 
 # ------------------- Step 23: Disable Apache at boot and kill it -------------------
 Write-Host "Disabling Apache service so it won't start when the computer boots..."
-sc.exe config "Apache2.4" start= disabled
+sc.exe config "Apache2.4" start= demand
 
-Write-Host "Stopping (killing) Apache if running..."
+Write-Host "Attempting to stop Apache service..."
 Stop-Service -Name "Apache2.4" -Force -ErrorAction SilentlyContinue
+
+Write-Host "Killing any remaining Apache processes (httpd.exe)..."
+taskkill /F /IM httpd.exe /T
