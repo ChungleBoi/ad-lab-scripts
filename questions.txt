@@ -40,11 +40,9 @@ Password123 as the SA Administrator for WEB02
 
 
 DEV01 script:
-Add a checkpoint in this script, so if MyService is already created and the permissions are already set (if Step 7 is complete) it will start with the manual step (Install XAMPP for Windows)
-
-
-DEV01:
-If Apache/MySQL can't be started, reboot.
+1. Add a checkpoint in this script, so if MyService is already created and the permissions are already set (if Step 7 is complete) it will start with the manual step (Install XAMPP for Windows)
+2. Reboot DEV01 and confirm the wordpress database is accessible.
+(If Apache/MySQL can't be started, reboot.)
 
 
 
