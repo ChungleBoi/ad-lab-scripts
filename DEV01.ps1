@@ -26,6 +26,17 @@ if (-not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdent
     exit
 }
 
+# --- Checkpoint: If MyService exists and permissions are already set, skip Steps 4-7 ---
+if (Get-Service -Name "MyService" -ErrorAction SilentlyContinue) {
+    if (Test-Path "C:\MyService") {
+        $permOutput = icacls "C:\MyService" | Out-String
+        if ($permOutput -match "BUILTIN\\Users:\(OI\)\(CI\)M" -and $permOutput -match "NT AUTHORITY\\SYSTEM:\(OI\)\(CI\)\(F\)") {
+            Write-Host "Checkpoint: 'MyService' service exists and permissions are set. Skipping Steps 4 to 7."
+            goto Step8
+        }
+    }
+}
+
 # ------------------- Step 4 -------------------
 Write-Host "Step 4: Creating application root directory at C:\MyService..."
 New-Item -Path "C:\MyService" -ItemType Directory -Force
@@ -56,6 +67,7 @@ Write-Host "Verifying permissions for program.exe and C:\MyService..."
 icacls "C:\MyService\program.exe"
 icacls "C:\MyService"
 
+:Step8
 # ------------------- Step 8 -------------------
 Confirm-ManualStep "Install XAMPP for Windows:
   a. Download from https://www.apachefriends.org/
