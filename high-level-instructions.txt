@@ -1,10 +1,28 @@
+When creating the new virtual machines in VMWare, set the encryption password to password123!!
+
+In the Virtual Machine Settings, Under "Device status", enable "Connect at power on". This is required to boot from the ISO image.
+
 Step 1: Initialize Domain Controller
+- Ensure only 1 (VMNet1) Network Adapter is Set in VMWare.
+- Continue running the DC01.ps1 script after reboots.
+- When the setup is complete, the script will output "Setup Complete".
+- Once the setup is complete, you can add a second (NAT) network adapter and sync the DC with an external time source
+- Ensure the Domain Controller continues to run at all times
+
 
 Step 2: Initialize Kali
+1. Open "Virtual Network Editor" from the VMWare "Edit" menu. Click "Change Settings" and confirm the UAC prompt. Set the bridged network adapter to bridge to your ethernet controller and click "OK". Ensure an ethernet cable is connected. This will allow file sharing with your host through a samba share.
+2. Boot Kali, set up, and start a Samba Share, following the documentation in KALI.txt
+3. Transfer Instructions.docx and powershell.lnk to Kali
+4. Run the setup script (KALI.sh)
+5. Update /etc/network/interfaces and /etc/resolv.conf, following the documentation in KALI.txt
+6. Shut down Kali, change the network adapter to VMNet1, and start Kali again.
+7. Confirm Connectivity to the domain controller, following the documentation in KALI.txt
+
 
 Step 3: Join Member Workstations to the Domain using domain-join.ps1 PowerShell script
 
-Computer names and corresponding host IP:
+Computer names and corresponding host IPs:
 FILES01 - 10.10.14.200
 ADMIN01 - 10.10.14.180
 ADMIN02 - 10.10.14.160
