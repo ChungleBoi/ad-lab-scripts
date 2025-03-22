@@ -1,38 +1,27 @@
 Questions:
 
-WEB01: Add to the script a command to enable Apache and MySQL at startup.
+DMZ01: Before getting NT Authority, are we able to read Chris' PowerShell history file?
 
 
 WEB02: Before getting NT Authority, are we able to check the MP preference to see which directories have an exclusion? Are we able to set an exclusion?
+Confirm that registry download works
+ERROR: A required privilege is not held by the client.
+Why is a required privilege not held? Was this a fluke? Or does WEB02 need to be rebooted and re-backed-up?
 
 
-DMZ01: Before getting NT Authority, are we able to read Chris' PowerShell history file?
+Overall: Are there any computers that we need to take actions on after they are already booted?
 
+
+----------------------------------------------------------------------
+Pentest Report Modifications
 
 DEV01: Can we enable Apache and MySQL when we have a reverse shell as Daniela? (add to pentest report)
 How can we separate Daniela and Ernesto into 2 different computers, so there's no setup after booting the VMs.
 
+
+-------------------------
+Afterward: 
+DC01 - Run to make sure the 2 prompts at the beginning work
+
 pentest-report.txt quarantined by Windows Defender
 Ensure you set a defender exclusion before you unzip the project on your PC
-
-
-
-Are there any computers that we need to take actions on after they are already booted?
-
-
-
-
-
-
-Then run the setup scripts to resolve the question: 
-MAIL01: Do we have to: "Add the instruction to open server manager."?
-DC01 - Confirm 2 prompts at the beginning work
-
-
-
-
-ALREADY FULL SETUP
-WEB02 - Confirm that registry download works
-ERROR: A required privilege is not held by the client.
-
-Why is a required privilege not held? Was this a fluke? Or does WEB02 need to be rebooted and re-backed-up?
