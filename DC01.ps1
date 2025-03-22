@@ -332,6 +332,6 @@ if ($currentStep -lt 10) {
 
     Write-Host "`n[Step 10] OUs & GPOs created/linked with simpler names, then renamed to plus-sign names."
     Set-Checkpoint 10
-    Write-Host "Step 10 complete. Re-run script to proceed."
+    Write-Host "Setup Complete. You may now add a NAT network adapter."
     return
 }
