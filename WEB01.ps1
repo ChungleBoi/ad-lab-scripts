@@ -35,6 +35,41 @@ Confirm-ManualStep "Start Apache and MySQL in XAMPP Control Panel:
 a. Click 'Start' next to 'Apache'
 b. Click 'Start' next to 'MySQL' and confirm the UAC prompt for mysqld."
 
+# ------------------- Step 5.1: Enable Apache and MySQL to Start at System Startup -------------------
+Write-Host "Enabling Apache and MySQL to start automatically at system startup..."
+
+# Enable Apache Service
+$apacheServiceName = "Apache2.4"
+if (Get-Service -Name $apacheServiceName -ErrorAction SilentlyContinue) {
+    Set-Service -Name $apacheServiceName -StartupType Automatic
+    Write-Host "Apache service ($apacheServiceName) set to Automatic."
+} else {
+    Write-Host "Apache service ($apacheServiceName) not found. Installing Apache service..."
+    & "C:\xampp\apache\bin\httpd.exe" -k install
+    if (Get-Service -Name $apacheServiceName -ErrorAction SilentlyContinue) {
+        Set-Service -Name $apacheServiceName -StartupType Automatic
+        Write-Host "Apache service installed and set to Automatic."
+    } else {
+        Write-Host "Failed to install Apache service. Please install it manually."
+    }
+}
+
+# Enable MySQL Service
+$mysqlServiceName = "mysql"
+if (Get-Service -Name $mysqlServiceName -ErrorAction SilentlyContinue) {
+    Set-Service -Name $mysqlServiceName -StartupType Automatic
+    Write-Host "MySQL service ($mysqlServiceName) set to Automatic."
+} else {
+    Write-Host "MySQL service ($mysqlServiceName) not found. Installing MySQL service..."
+    & "C:\xampp\mysql\bin\mysqld.exe" --install
+    if (Get-Service -Name $mysqlServiceName -ErrorAction SilentlyContinue) {
+        Set-Service -Name $mysqlServiceName -StartupType Automatic
+        Write-Host "MySQL service installed and set to Automatic."
+    } else {
+        Write-Host "Failed to install MySQL service. Please install it manually."
+    }
+}
+
 # ------------------- Step 6: Create MySQL Database 'login_system' -------------------
 Confirm-ManualStep "Create a MySQL database named 'login_system':
 a. Click 'Admin' next to 'MySQL' in XAMPP Control Panel.
@@ -42,7 +77,7 @@ b. Click 'Databases' in the phpMyAdmin window.
 c. Type 'login_system' in the text entry box and click 'Create'."
 
 # ------------------- Step 7: Create the Users Table -------------------
-Write-Host "`nStep 7: Create the Users table by running the following SQL query in phpMyAdmin:"
+Write-Host "Step 7: Create the Users table by running the following SQL query in phpMyAdmin:"
 Write-Host "  CREATE TABLE users (" -ForegroundColor Cyan
 Write-Host "      id INT AUTO_INCREMENT PRIMARY KEY," -ForegroundColor Cyan
 Write-Host "      username VARCHAR(50) NOT NULL UNIQUE," -ForegroundColor Cyan
@@ -55,7 +90,7 @@ Confirm-ManualStep "Instructions:
   c. Click 'Submit Query' to execute the query."
 
 # ------------------- Step 8: Add a User to the Table -------------------
-Write-Host "`nStep 8: Add a user to the table by running the following SQL query in phpMyAdmin:"
+Write-Host "Step 8: Add a user to the table by running the following SQL query in phpMyAdmin:"
 Write-Host "  INSERT INTO users (username, password)" -ForegroundColor Cyan
 Write-Host "  VALUES ('mysql', MD5('MySQLPassword123'));" -ForegroundColor Cyan
 
@@ -64,7 +99,7 @@ Confirm-ManualStep "Instructions:
   b. Click 'Submit Query' to execute the query."
 
 # ------------------- Step 9: Update the Root User's Password -------------------
-Write-Host "`nStep 9: Update the Root user's password by running the following SQL query in phpMyAdmin:"
+Write-Host "Step 9: Update the Root user's password by running the following SQL query in phpMyAdmin:"
 Write-Host "  ALTER USER 'root'@'localhost' IDENTIFIED BY 'tt.r.2006';" -ForegroundColor Cyan
 
 Confirm-ManualStep "Instructions:
