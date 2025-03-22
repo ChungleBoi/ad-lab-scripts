@@ -2,7 +2,8 @@
 # Deploy_XAMPP_LoginSystem_Setup.ps1
 #
 # This script automates parts of the XAMPP login system setup
-# and prompts for manual steps where necessary.
+# and configures Apache and MySQL to run as Windows services at startup
+# without requiring a UAC prompt.
 #
 # NOTE: Run this script as Administrator.
 # ============================================================
@@ -27,48 +28,30 @@ if (-not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdent
 # ------------------- Step 4: Install XAMPP for Windows -------------------
 Confirm-ManualStep "Install XAMPP for Windows:
 a. Go to: https://www.apachefriends.org/
-b. Click 'XAMPP for Windows' (be patient, the download may take a while)
-c. Double-click the XAMPP installer (in the Downloads folder), confirm the UAC prompt for Apache, and choose the default options in the installer"
+b. Click 'XAMPP for Windows' (the download may take a while to get started. Be patient).
+c. Double-click the XAMPP installer in the Downloads folder (this may take a while, be patient)
+d. click 'Next' to choose the default options in the installer and confirm any UAC prompt that appears."
 
-# ------------------- Step 5: Start Apache and MySQL in XAMPP Control Panel -------------------
-Confirm-ManualStep "Start Apache and MySQL in XAMPP Control Panel:
-a. Click 'Start' next to 'Apache'
-b. Click 'Start' next to 'MySQL' and confirm the UAC prompt for mysqld."
+# ------------------- Step 5: Enable Apache and MySQL at Startup -------------------
+Write-Host "Installing Apache service..."
+& "C:\xampp\apache\bin\httpd.exe" -k install
 
-# ------------------- Step 5.1: Enable Apache and MySQL to Start at System Startup -------------------
-Write-Host "Enabling Apache and MySQL to start automatically at system startup..."
+Write-Host "Installing MySQL service..."
+& "C:\xampp\mysql\bin\mysqld.exe" --install
 
-# Enable Apache Service
-$apacheServiceName = "Apache2.4"
-if (Get-Service -Name $apacheServiceName -ErrorAction SilentlyContinue) {
-    Set-Service -Name $apacheServiceName -StartupType Automatic
-    Write-Host "Apache service ($apacheServiceName) set to Automatic."
-} else {
-    Write-Host "Apache service ($apacheServiceName) not found. Installing Apache service..."
-    & "C:\xampp\apache\bin\httpd.exe" -k install
-    if (Get-Service -Name $apacheServiceName -ErrorAction SilentlyContinue) {
-        Set-Service -Name $apacheServiceName -StartupType Automatic
-        Write-Host "Apache service installed and set to Automatic."
-    } else {
-        Write-Host "Failed to install Apache service. Please install it manually."
-    }
-}
+Write-Host "Setting Apache service to start automatically..."
+Set-Service -Name "Apache2.4" -StartupType Automatic
 
-# Enable MySQL Service
-$mysqlServiceName = "mysql"
-if (Get-Service -Name $mysqlServiceName -ErrorAction SilentlyContinue) {
-    Set-Service -Name $mysqlServiceName -StartupType Automatic
-    Write-Host "MySQL service ($mysqlServiceName) set to Automatic."
-} else {
-    Write-Host "MySQL service ($mysqlServiceName) not found. Installing MySQL service..."
-    & "C:\xampp\mysql\bin\mysqld.exe" --install
-    if (Get-Service -Name $mysqlServiceName -ErrorAction SilentlyContinue) {
-        Set-Service -Name $mysqlServiceName -StartupType Automatic
-        Write-Host "MySQL service installed and set to Automatic."
-    } else {
-        Write-Host "Failed to install MySQL service. Please install it manually."
-    }
-}
+Write-Host "Setting MySQL service to start automatically..."
+Set-Service -Name "mysql" -StartupType Automatic
+
+Write-Host "Starting Apache service..."
+Start-Service -Name "Apache2.4"
+
+Write-Host "Starting MySQL service..."
+Start-Service -Name "mysql"
+
+Write-Host "Apache and MySQL services have been installed and started with automatic startup. No UAC prompt will be required on system startup."
 
 # ------------------- Step 6: Create MySQL Database 'login_system' -------------------
 Confirm-ManualStep "Create a MySQL database named 'login_system':
@@ -77,7 +60,7 @@ b. Click 'Databases' in the phpMyAdmin window.
 c. Type 'login_system' in the text entry box and click 'Create'."
 
 # ------------------- Step 7: Create the Users Table -------------------
-Write-Host "Step 7: Create the Users table by running the following SQL query in phpMyAdmin:"
+Write-Host "`nStep 7: Create the Users table by running the following SQL query in phpMyAdmin:"
 Write-Host "  CREATE TABLE users (" -ForegroundColor Cyan
 Write-Host "      id INT AUTO_INCREMENT PRIMARY KEY," -ForegroundColor Cyan
 Write-Host "      username VARCHAR(50) NOT NULL UNIQUE," -ForegroundColor Cyan
@@ -90,7 +73,7 @@ Confirm-ManualStep "Instructions:
   c. Click 'Submit Query' to execute the query."
 
 # ------------------- Step 8: Add a User to the Table -------------------
-Write-Host "Step 8: Add a user to the table by running the following SQL query in phpMyAdmin:"
+Write-Host "`nStep 8: Add a user to the table by running the following SQL query in phpMyAdmin:"
 Write-Host "  INSERT INTO users (username, password)" -ForegroundColor Cyan
 Write-Host "  VALUES ('mysql', MD5('MySQLPassword123'));" -ForegroundColor Cyan
 
@@ -99,7 +82,7 @@ Confirm-ManualStep "Instructions:
   b. Click 'Submit Query' to execute the query."
 
 # ------------------- Step 9: Update the Root User's Password -------------------
-Write-Host "Step 9: Update the Root user's password by running the following SQL query in phpMyAdmin:"
+Write-Host "`nStep 9: Update the Root user's password by running the following SQL query in phpMyAdmin:"
 Write-Host "  ALTER USER 'root'@'localhost' IDENTIFIED BY 'tt.r.2006';" -ForegroundColor Cyan
 
 Confirm-ManualStep "Instructions:
