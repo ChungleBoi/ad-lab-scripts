@@ -4,7 +4,7 @@ Instructions (before completing setup):
 - Increase Memory to 4 GB (the Minimum required for Hashcat)
 - Fully Update and Fully Upgrade System
 - Create Instructions.docx on your Host and transfer it to Kali home directory
-      1. Open Virtual Network Editor in VMWare
+      1. Open Virtual Network Editor in VMWare (from the Edit Menu)
             - Click "Change Settings" and confirm the UAC Prompt
             - Change Bridged Adapter Connection to - Your Ethernet Controller (This will allow file sharing between Kali and your host.)
       2. Set Up and Start a Samba Share in Kali
