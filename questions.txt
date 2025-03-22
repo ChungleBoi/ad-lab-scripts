@@ -14,15 +14,6 @@ DEV01 script - after rebooting, or after step 7 is complete, run the script and 
 
 Penetration Testing Report Edits:
 
-ADMIN04:
-
-Use the correct payload for the reverse shell generator
-powershell.exe -NoP -NonI -ExecutionPolicy Bypass -EncodedCommand
-not
-powershell -nop -w hidden -e
-
-encode4449.py should be changed
-
 
 ADMIN01:
 Change Port 443 to 4451
