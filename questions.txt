@@ -1,5 +1,7 @@
 Questions:
 
+WEB01: Add to the script a command to enable Apache and MySQL at startup.
+
 
 WEB02: Before getting NT Authority, are we able to check the MP preference to see which directories have an exclusion? Are we able to set an exclusion?
 
@@ -7,6 +9,12 @@ WEB02: Before getting NT Authority, are we able to check the MP preference to se
 DMZ01: Before getting NT Authority, are we able to read Chris' PowerShell history file?
 
 
+DEV01: Can we enable Apache and MySQL when we have a reverse shell as Daniela? (add to pentest report)
+How can we separate Daniela and Ernesto into 2 different computers, so there's no setup after booting the VMs.
 
 pentest-report.txt quarantined by Windows Defender
 Ensure you set a defender exclusion before you unzip the project on your PC
+
+
+
+Are there any computers that we need to take actions on after they are already booted?
