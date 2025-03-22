@@ -80,8 +80,9 @@ if (!(Test-Path "C:\xampp\apache\bin\httpd.exe")) {
 
     # Reprompt the user to install XAMPP
     Confirm-ManualStep "Install XAMPP for Windows:
-      a. Download from https://www.apachefriends.org/
-      b. Run the installer from your Downloads folder, click 'Allow' on the UAC Prompt to allow Apache, and choose the default options to install Apache"
+      a. Go to: https://www.apachefriends.org/
+      b. Click 'XAMPP for Windows' (be patient, the download may take a while)
+      c. Double-click the XAMPP installer (in the Downloads folder), confirm the UAC prompt for Apache, and choose the default options in the installer"
 }
 
 # After the second prompt, check again
