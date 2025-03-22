@@ -5,3 +5,8 @@ WEB02: Before getting NT Authority, are we able to check the MP preference to se
 
 
 DMZ01: Before getting NT Authority, are we able to read Chris' PowerShell history file?
+
+
+
+pentest-report.txt quarantined by Windows Defender
+Ensure you set a defender exclusion before you unzip the project on your PC
