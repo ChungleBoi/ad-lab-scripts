@@ -27,53 +27,57 @@ if (-not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdent
 }
 
 # --- Checkpoint: If MyService exists and permissions are already set, skip Steps 4-7 ---
+$skipSteps4to7 = $false
 if (Get-Service -Name "MyService" -ErrorAction SilentlyContinue) {
     if (Test-Path "C:\MyService") {
         $permOutput = icacls "C:\MyService" | Out-String
-        if ($permOutput -match "BUILTIN\\Users:\(OI\)\(CI\)M" -and $permOutput -match "NT AUTHORITY\\SYSTEM:\(OI\)\(CI\)\(F\)") {
+        # Check for expected permissions: BUILTIN\Users:(OI)(CI)(M) and NT AUTHORITY\SYSTEM:(OI)(CI)(F)
+        if ($permOutput -match "BUILTIN\\Users:\(OI\)\(CI\)\(M\)" -and $permOutput -match "NT AUTHORITY\\SYSTEM:\(OI\)\(CI\)\(F\)") {
             Write-Host "Checkpoint: 'MyService' service exists and permissions are set. Skipping Steps 4 to 7."
-            goto Step8
+            $skipSteps4to7 = $true
         }
     }
 }
 
-# ------------------- Step 4 -------------------
-Write-Host "Step 4: Creating application root directory at C:\MyService..."
-New-Item -Path "C:\MyService" -ItemType Directory -Force
+if (-not $skipSteps4to7) {
+    # ------------------- Step 4 -------------------
+    Write-Host "Step 4: Creating application root directory at C:\MyService..."
+    New-Item -Path "C:\MyService" -ItemType Directory -Force
 
-Write-Host "Adding Windows Defender exclusion for C:\MyService..."
-Add-MpPreference -ExclusionPath "C:\MyService"
+    Write-Host "Adding Windows Defender exclusion for C:\MyService..."
+    Add-MpPreference -ExclusionPath "C:\MyService" -ErrorAction SilentlyContinue
 
-# ------------------- Step 5 -------------------
-Write-Host "Step 5: Creating dummy program.exe in C:\MyService..."
-$dummyContent = "This is a dummy executable for demonstration purposes."
-Set-Content -Path "C:\MyService\program.exe" -Value $dummyContent
+    # ------------------- Step 5 -------------------
+    Write-Host "Step 5: Creating dummy program.exe in C:\MyService..."
+    $dummyContent = "This is a dummy executable for demonstration purposes."
+    Set-Content -Path "C:\MyService\program.exe" -Value $dummyContent
 
-# ------------------- Step 6 -------------------
-Write-Host "Step 6: Creating service 'MyService'..."
-New-Service -Name "MyService" -BinaryPathName "C:\MyService\program.exe" -DisplayName "MyService" -StartupType Automatic
+    # ------------------- Step 6 -------------------
+    Write-Host "Step 6: Creating service 'MyService'..."
+    New-Service -Name "MyService" -BinaryPathName "C:\MyService\program.exe" -DisplayName "MyService" -StartupType Automatic
 
-Write-Host "Verifying service configuration..."
-sc.exe qc MyService
-Get-Service MyService
+    Write-Host "Verifying service configuration..."
+    sc.exe qc MyService
+    Get-Service MyService
 
-# ------------------- Step 7 -------------------
-Write-Host "Step 7: Modifying permissions on C:\MyService and its files..."
-icacls "C:\MyService" /inheritance:r
-icacls "C:\MyService" /grant "BUILTIN\Users:(OI)(CI)M" /T
-icacls "C:\MyService" /grant "NT AUTHORITY\SYSTEM:(OI)(CI)(F)" /T
+    # ------------------- Step 7 -------------------
+    Write-Host "Step 7: Modifying permissions on C:\MyService and its files..."
+    icacls "C:\MyService" /inheritance:r
+    icacls "C:\MyService" /grant "BUILTIN\Users:(OI)(CI)(M)" /T
+    icacls "C:\MyService" /grant "NT AUTHORITY\SYSTEM:(OI)(CI)(F)" /T
 
-Write-Host "Verifying permissions for program.exe and C:\MyService..."
-icacls "C:\MyService\program.exe"
-icacls "C:\MyService"
+    Write-Host "Verifying permissions for program.exe and C:\MyService..."
+    icacls "C:\MyService\program.exe"
+    icacls "C:\MyService"
+}
+else {
+    Write-Host "Skipping Steps 4-7 as the checkpoint conditions are met."
+}
 
-:Step8
 # ------------------- Step 8 -------------------
 Confirm-ManualStep "Install XAMPP for Windows:
-a. Go to: https://www.apachefriends.org/
-b. Click 'XAMPP for Windows' (the download may take a while to get started. Be patient).
-c. Double-click the XAMPP installer in the Downloads folder (this may take a while, be patient)
-d. Click 'Next' to choose the default options in the installer and confirm the UAC prompt that appears."
+  a. Download from https://www.apachefriends.org/
+  b. Run the installer from your Downloads folder, click 'Allow' on the UAC Prompt to allow Apache, and choose the default options to install Apache"
 
 # ------------------- Steps 9 & 12 -------------------
 # First check if httpd.exe is found
@@ -82,10 +86,8 @@ if (!(Test-Path "C:\xampp\apache\bin\httpd.exe")) {
 
     # Reprompt the user to install XAMPP
     Confirm-ManualStep "Install XAMPP for Windows:
-a. Go to: https://www.apachefriends.org/
-b. Click 'XAMPP for Windows' (the download may take a while to get started. Be patient).
-c. Double-click the XAMPP installer in the Downloads folder (this may take a while, be patient)
-d. Click 'Next' to choose the default options in the installer and confirm the UAC prompt that appears."
+      a. Download from https://www.apachefriends.org/
+      b. Run the installer from your Downloads folder, click 'Allow' on the UAC Prompt to allow Apache, and choose the default options to install Apache"
 }
 
 # After the second prompt, check again
