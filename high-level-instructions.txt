@@ -1,4 +1,5 @@
 When creating the new virtual machines in VMWare, set the encryption password to password123!!
+(this will allow you to start up the VMs on a different device)
 
 In the Virtual Machine Settings, Under "Device status", enable "Connect at power on". This is required to boot from the ISO image.
 
