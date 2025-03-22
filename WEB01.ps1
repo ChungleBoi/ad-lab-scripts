@@ -27,8 +27,8 @@ if (-not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdent
 # ------------------- Step 4: Install XAMPP for Windows -------------------
 Confirm-ManualStep "Install XAMPP for Windows:
 a. Go to: https://www.apachefriends.org/
-b. Click 'XAMPP for Windows'
-c. Double-click the XAMPP installer (in the Downloads folder) and click 'Next' to choose the default options in the installer and confirm the UAC prompt for Apache."
+b. Click 'XAMPP for Windows' (be patient, the download may take a while)
+c. Double-click the XAMPP installer (in the Downloads folder), confirm the UAC prompt for Apache, and choose the default options in the installer"
 
 # ------------------- Step 5: Start Apache and MySQL in XAMPP Control Panel -------------------
 Confirm-ManualStep "Start Apache and MySQL in XAMPP Control Panel:
