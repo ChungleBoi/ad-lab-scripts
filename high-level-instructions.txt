@@ -50,7 +50,18 @@ iis_service: daisy_3
 
 
 Step 4: Set up Attack Boxes using their PowerShell scripts
-(Note: Read the about.txt file for setup information) 
+
+1. Make sure Windows Security is initialized, then run the scripts
+2. Then make sure Windows Defender Exclusions were successfully applied on the following computers (WEB01, WEB02, DMZ01, DEV01, ADMIN01)
+WEB01 - 
+WEB02 - 
+DMZ01 - 
+DEV01 - 
+ADMIN01 - 
+3. WEB02.ps1 needs to be run a second time, after the computer reboots.
+4. WEB02 - Log in as Betty, to cache a domain credential.
+5. DEV01 - After running DEV01.ps1, log in as Daniela and run DEV01-Part2.ps1
+6. ADMIN02 - Download Instructions.docx to Helen's home directory, prior to running script
 
 
 Phase 5: Complete the post-setup steps, in the .txt file, if applicable.
