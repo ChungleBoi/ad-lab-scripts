@@ -18,3 +18,21 @@ Ensure you set a defender exclusion before you unzip the project on your PC
 
 
 Are there any computers that we need to take actions on after they are already booted?
+
+
+
+
+
+
+Then run the setup scripts to resolve the question: 
+MAIL01: Do we have to: "Add the instruction to open server manager."?
+DC01 - Confirm 2 prompts at the beginning work
+
+
+
+
+ALREADY FULL SETUP
+WEB02 - Confirm that registry download works
+ERROR: A required privilege is not held by the client.
+
+Why is a required privilege not held? Was this a fluke? Or does WEB02 need to be rebooted and re-backed-up?
