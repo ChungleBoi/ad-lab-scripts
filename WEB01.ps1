@@ -30,7 +30,7 @@ Confirm-ManualStep "Install XAMPP for Windows:
 a. Go to: https://www.apachefriends.org/
 b. Click 'XAMPP for Windows' (the download may take a while to get started. Be patient).
 c. Double-click the XAMPP installer in the Downloads folder (this may take a while, be patient)
-d. click 'Next' to choose the default options in the installer and confirm any UAC prompt that appears."
+d. Click 'Next' to choose the default options in the installer and confirm the UAC prompt that appears."
 
 # ------------------- Step 5: Enable Apache and MySQL at Startup -------------------
 Write-Host "Installing Apache service..."
