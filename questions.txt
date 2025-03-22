@@ -6,26 +6,14 @@ Scripts:
 Make sure Windows Security is initialized before running the script
 
 Confirm these scripts still work after the edits:
+
 DC01 script - 2 prompts at beginning
+
 DEV01 script - after rebooting, or after step 7 is complete, run the script and confirm the checkpoint works, (The script doesn't restart from the beginning, it starts from the manual step.)
+Confirm the wordpress database is accessible. (If Apache/MySQL can't be started, reboot.)
 
 ------------------------------------------------
 
-
-Penetration Testing Report Edits:
-
-
-ADMIN01:
-Change Port 443 to 4451
-Change Port 444 to 4452
-
-
-OVERALL:
-Make sure in the penetration testing report, you change directory to the intended directory, before creating the msfvenom payload. Make sure the python3 http server is started immediately after creating the payload.
-
-
-
------------------------------------------------------------------------------------------------------------------------
 Questions:
 
 
