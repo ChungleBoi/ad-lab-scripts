@@ -6,9 +6,8 @@ Scripts:
 Make sure Windows Security is initialized before running the script
 
 Confirm these scripts still work after the edits:
-DC01 script
-DEV01 script
-
+DC01 script - 2 prompts at beginning
+DEV01 script - after rebooting, or after step 7 is complete, run the script and confirm the checkpoint works, (The script doesn't restart from the beginning, it starts from the manual step.)
 
 ------------------------------------------------
 
