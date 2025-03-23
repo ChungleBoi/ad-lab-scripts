@@ -221,4 +221,10 @@ Click "OK" to save settings.
 Read-Host "Press 'Y' once completed"
 
 # Step 18: Defender exclusion
-Add-MpPreference -ExclusionPath "C:\Users\Public"
+try {
+    Add-MpPreference -ExclusionPath "C:\Users\Public" -ErrorAction Stop
+    Write-Host "Action Needed: Confirm the UAC prompt to add the Windows Defender Exclusion for C:\Users\Public"
+}
+catch {
+    Write-Host "Unable to add Windows Defender Exclusion. Give Windows Security time to startup. Once it is started, run: Add-MpPreference -ExclusionPath 'C:\Users\Public'" -ForegroundColor Yellow
+}
