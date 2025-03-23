@@ -63,7 +63,6 @@ $betaDir = "C:\MyApps\Beta Program"
 if (-not (Test-Path $betaDir)) {
     New-Item -Path $betaDir -ItemType Directory -Force | Out-Null
 }
-Add-MpPreference -ExclusionPath "C:\MyApps"
 Start-Sleep 1
 
 Write-Host "`n===== Step 4: Create betaservice.exe if it does not exist in the current directory =====" -ForegroundColor Cyan
@@ -149,10 +148,19 @@ Write-Host "`n===== Step 10: Create a Scheduled Task to start BetaService on sys
 schtasks /create /tn "StartBetaServiceOnBoot" /sc onstart /tr "powershell.exe -NoProfile -ExecutionPolicy Bypass -Command Restart-Service BetaService" /ru "NT AUTHORITY\SYSTEM" /f
 Start-Sleep 1
 
+Write-Host "`n===== Step 11: Defender exclusion =====" -ForegroundColor Cyan
+try {
+    Add-MpPreference -ExclusionPath "C:\MyApps" -ErrorAction Stop
+    Write-Host "Action Needed: Confirm the UAC prompt to add the Windows Defender Exclusion for C:\MyApps"
+}
+catch {
+    Write-Host "Unable to add Windows Defender Exclusion. Give Windows Security time to startup. Once it is started, run: Add-MpPreference -ExclusionPath 'C:\MyApps'" -ForegroundColor Yellow
+}
+
 # =========================
 # FINAL STEP
 # =========================
-Write-Host "`n===== Step 11: Relay an Email to DEV01 (final step) =====" -ForegroundColor Magenta
+Write-Host "`n===== Step 12: Relay an Email to DEV01 (final step) =====" -ForegroundColor Magenta
 Write-Host "Run the following command manually in your interactive PowerShell session" -ForegroundColor Magenta
 Write-Host "" -ForegroundColor Magenta
 Write-Host "Send-MailMessage -SmtpServer 'MAIL01' -From 'administrator@ad.lab' -To 'daniela@ad.lab' -Subject 'Test SMTP Relay' -Body 'Hello from Windows Server SMTP!'" -ForegroundColor Yellow
