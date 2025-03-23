@@ -16,9 +16,5 @@ Log in as: ad\aaron
 Make Aaron a local administrator
 
 
-Instructions (after completing setup):
-Start Apache and MySQL in XAMPP Control Panel
-
-
 Ensure this Defender exclusion is applied:
 Add-MpPreference -ExclusionPath "C:\xampp\htdocs"
