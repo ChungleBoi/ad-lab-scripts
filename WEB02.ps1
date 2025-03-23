@@ -66,6 +66,7 @@ h. On "Database Engine Configuration":
     # Step 8: Install SSMS
     Write-Host "Download and install SSMS from:`nhttps://learn.microsoft.com/en-us/sql/ssms/download-sql-server-management-studio-ssms?view=sql-server-ver16" -ForegroundColor Cyan
     Write-Host "Press Restart once the SSMS installation is complete (the SSMS installer typically offers a Restart button)."
+    Write-Host "After restarting, run this script again to continue setup."
     # Immediately exit so the user can restart without continuing further steps
     return
 }
