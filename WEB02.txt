@@ -17,8 +17,8 @@ Make iis_service a local Administrator
 
 
 Instructions (while completing setup):
-Restart WEB02 through SSMS when prompted and run the script again after it reboots. 
-If the SQL commands fail to run after the reboot, give SSMS some more time to startup and run the script again.
+1. Restart WEB02 through SSMS when prompted and run the script again after it reboots. 
+2. If the SQL commands fail to run after the reboot, give SSMS some more time to startup and run the script again.
 
 
 Instructions (after completing setup): 
