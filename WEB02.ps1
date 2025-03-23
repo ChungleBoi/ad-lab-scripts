@@ -84,10 +84,7 @@ Click 'OK' to apply changes.
 "@) -ForegroundColor Cyan
 Read-Host "Press 'Y' once completed"
 
-# Step 14: Defender exclusion
-Add-MpPreference -ExclusionPath "C:\Users\Public"
-
-# Step 15: Create login.asp within script
+# Step 14: Create login.asp within script
 # We define the ASP variables at the top so they won't be 'undefined'
 $loginAspContent = @"
 <%
@@ -195,10 +192,10 @@ $outputPath = "C:\inetpub\wwwroot\login.asp"
 Set-Content -Path $outputPath -Value $loginAspContent -Force
 Write-Host "login.asp has been created at $outputPath"
 
-# Step 16: Open Port 80
+# Step 15: Open Port 80
 New-NetFirewallRule -DisplayName "Open Port 80" -Direction Inbound -Protocol TCP -LocalPort 80 -Action Allow
 
-# Step 17: Set IIS Default Application Pool Identity
+# Step 16: Set IIS Default Application Pool Identity
 Write-Host (@"
 Open IIS Manager:
 a. Expand "WEB02 (AD\iis_service)", click "Application Pools"
@@ -208,7 +205,7 @@ d. Select "Custom account", click "Set", enter "ad\iis_service" and password "da
 "@) -ForegroundColor Cyan
 Read-Host "Press 'Y' once completed"
 
-# Step 18: Configure Windows Authentication Method
+# Step 17: Configure Windows Authentication Method
 Write-Host (@"
 In IIS Manager:
 a. Click "Sites" -> "Default Web Site" -> "Authentication"
@@ -222,3 +219,6 @@ e. Right-click "Windows Authentication" -> "Advanced Settings"
 Click "OK" to save settings.
 "@) -ForegroundColor Cyan
 Read-Host "Press 'Y' once completed"
+
+# Step 18: Defender exclusion
+Add-MpPreference -ExclusionPath "C:\Users\Public"
