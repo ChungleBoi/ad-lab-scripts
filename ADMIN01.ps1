@@ -178,7 +178,7 @@ if (Test-Path "C:\NewService\service.log") {
 # 8. Add a Windows Defender directory exclusion for 'C:\Users\Helen'
 try {
     Add-MpPreference -ExclusionPath "C:\Users\Helen" -ErrorAction Stop
-    Write-Host "Action Needed: Confirm the UAC prompt to add the Windows Defender Exclusion for C:\Users\Helen"
+    Write-Host "Action Needed: Confirm the Windows Defender Exclusion for C:\Users\Helen"
 }
 catch {
     Write-Host "Unable to add Windows Defender Exclusion. Give Windows Security (Virus and Threat Protection) some more time to startup. Once it is started, run: Add-MpPreference -ExclusionPath 'C:\Users\Helen'" -ForegroundColor Yellow
