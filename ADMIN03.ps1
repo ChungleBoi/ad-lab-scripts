@@ -28,3 +28,6 @@ Start-Process powershell -Verb runAs -ArgumentList `
 Write-Host "`nUser-level AdminPassword in this session: $env:AdminPassword"
 Write-Host "Try: Get-ChildItem Env:AdminPassword in this same session"
 Write-Host "`nOpen a new PowerShell session if you want to test the Machine-level variable."
+
+# 5. Setup Complete
+Write-Host "Script completed successfully."
