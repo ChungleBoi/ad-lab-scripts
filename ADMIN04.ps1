@@ -14,3 +14,6 @@ New-NetFirewallRule -DisplayName "Open Port 139" -Direction Inbound -Protocol TC
 
 # Create firewall rule for TCP port 445
 New-NetFirewallRule -DisplayName "Open Port 445" -Direction Inbound -Protocol TCP -LocalPort 445 -Action Allow
+
+# Setup Complete
+Write-Host "Script completed successfully."
