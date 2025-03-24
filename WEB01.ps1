@@ -9,13 +9,17 @@
 # ============================================================
 
 # Function to pause for manual step confirmation.
-function Confirm-ManualStep($stepDescription) {
+function Confirm-ManualStep($stepDescription, [bool]$CheckXAMPP = $false) {
     Write-Host ""
     Write-Host "MANUAL STEP REQUIRED: $stepDescription" -ForegroundColor Yellow
     do {
         $response = Read-Host "After completing the above step, type 'Y' to continue"
     } while ($response -notin @("Y", "y"))
-    Write-Host "XAMPP is not installed. Install XAMPP and type 'Y' once it is installed"
+    if ($CheckXAMPP) {
+        if (-not ((Test-Path "C:\xampp\apache\bin\httpd.exe") -and (Test-Path "C:\xampp\mysql\bin\mysqld.exe"))) {
+            Write-Host "XAMPP is not installed. Install XAMPP and type 'Y' once it is installed" -ForegroundColor Yellow
+        }
+    }
 }
 
 # --- Ensure the script is running with elevated privileges ---
@@ -38,7 +42,7 @@ a. Go to: https://www.apachefriends.org/
 b. Click 'XAMPP for Windows' (the download may take a while to get started. Be patient).
 c. Double-click the XAMPP installer in the Downloads folder (this may take a while, be patient).
 d. Click 'Next' to choose the default options in the installer and confirm the UAC prompt that appears.
-Please ensure XAMPP is properly installed before continuing."
+Please ensure XAMPP is properly installed before continuing." $true
     }
 
     # ------------------- Step 5: Enable Apache and MySQL at Startup -------------------
@@ -54,7 +58,7 @@ Please ensure XAMPP is properly installed before continuing."
     Write-Host "Setting MySQL service to start automatically..."
     Set-Service -Name "mysql" -StartupType Automatic
 
-    # ------------------- New Step: Configure Services to Run as 'aaron' -------------------
+    # ------------------- Configure Services to Run as 'aaron' -------------------
     Write-Host "`nConfiguring services to run under the 'aaron' user account with the hard-coded password."
     $plainPassword = "tt.r.2006"
 
