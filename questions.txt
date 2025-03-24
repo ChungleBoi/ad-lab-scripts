@@ -9,6 +9,7 @@ KALI - Confirm memory is 4 GB
 
 ADMIN03: When we get Helen's password can we automatically connect to ADMIN02 or ADMIN01 given that Helen is a local admin on them?
 
+MAIL01 - You may need to restart to get the reverse shell 
 
 DMZ01 - You may need to log in first before you can Evil-WinRM connect
 
