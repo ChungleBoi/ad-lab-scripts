@@ -15,8 +15,7 @@ function Confirm-ManualStep($stepDescription) {
     do {
         $response = Read-Host "After completing the above step, type 'Y' to continue"
     } while ($response -notin @("Y", "y"))
-    Write-Host "Continuing..."
-    Write-Host ""
+    Write-Host "XAMPP is not installed. Install XAMPP and type 'Y' once it is installed"
 }
 
 # --- Ensure the script is running with elevated privileges ---
@@ -33,8 +32,7 @@ if ($apacheService -and $mysqlService) {
     Write-Host "XAMPP services are already installed. Skipping installation steps."
 } else {
     # ------------------- Verify XAMPP Installation -------------------
-    # Loop until the required XAMPP executables are found
-    while (-not (Test-Path "C:\xampp\apache\bin\httpd.exe" -and Test-Path "C:\xampp\mysql\bin\mysqld.exe")) {
+    while (-not ((Test-Path "C:\xampp\apache\bin\httpd.exe") -and (Test-Path "C:\xampp\mysql\bin\mysqld.exe"))) {
         Confirm-ManualStep "Install XAMPP for Windows:
 a. Go to: https://www.apachefriends.org/
 b. Click 'XAMPP for Windows' (the download may take a while to get started. Be patient).
