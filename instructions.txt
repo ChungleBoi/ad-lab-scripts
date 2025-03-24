@@ -55,6 +55,7 @@ net localgroup Administrators /add ad\[User]
 Step 4: Set up Attack Boxes using their PowerShell scripts
 1. Make sure Windows Security is initialized, then run the scripts
 2. If the computer restarts, resume running the script until it outputs: "Script completed successfully."
+3. WEB02 - Restart WEB02 through SSMS when prompted and run the script again after it reboots. If the SQL commands fail to run after the reboot, give SSMS some more time to startup and run the script again.
 
 
 Step 5: Final steps
