@@ -185,4 +185,4 @@ catch {
 }
 
 # 9. Setup Complete
-Write-Host "Setup script complete."
+Write-Host "Script completed successfully."
