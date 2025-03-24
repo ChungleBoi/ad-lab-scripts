@@ -17,9 +17,5 @@ Make Chris a local Administrator
 
 
 Instructions (after completing setup): 
-Run this command, to save a clue to PowerShell history:
-Send-MailMessage -SmtpServer "MAIL01" -From "administrator@ad.lab" -To "daniela@ad.lab" -Subject "Test SMTP Relay" -Body "Hello from Windows Server SMTP!"
-
-
-Ensure this Defender exclusion is applied:
-Add-MpPreference -ExclusionPath "C:\MyApps"
+1. Run this command, to save a clue to PowerShell history: Send-MailMessage -SmtpServer "MAIL01" -From "administrator@ad.lab" -To "daniela@ad.lab" -Subject "Test SMTP Relay" -Body "Hello from Windows Server SMTP!"
+2. Ensure this Defender exclusion is applied: Add-MpPreference -ExclusionPath "C:\MyApps"
