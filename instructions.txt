@@ -56,11 +56,10 @@ Step 4: Set up Attack Boxes using their PowerShell scripts
 1. Make sure Windows Security is initialized, then run the scripts
 2. If the computer restarts, resume running the script until it outputs: "Script completed successfully."
 3. WEB02 - Restart WEB02 through SSMS when prompted and run the script again after it reboots. If the SQL commands fail to run after the reboot, give SSMS some more time to startup and run the script again.
-
+4. Ensure the Windows Defender exclusions were successfully applied on WEB01, WEB02, DMZ01, DEV01, ADMIN01.
 
 Step 5: Final steps
-1. Ensure the Windows Defender exclusions were successfully applied on WEB01, WEB02, DMZ01, DEV01, ADMIN01.
-2. WEB02 - Log in as Betty, to cache a domain credential.
-3. DMZ01 - Manually run the Send-Email command in PowerShell, to save the clue.
-4. DEV01 - After running DEV01.ps1, log in as Daniela and run DEV01-Part2.ps1
-5. ADMIN02 - Download Instructions.docx to Helen's home directory, prior to running script
+1. WEB02 - Log in as Betty, to cache a domain credential.
+2. DMZ01 - Manually run the "Send-Email" command in PowerShell, to save the clue to the history file.
+3. DEV01 - After running DEV01.ps1, log in as Daniela and run DEV01-Part2.ps1
+4. ADMIN02 - Download Instructions.docx to Helen's home directory, prior to running script
