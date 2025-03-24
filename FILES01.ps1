@@ -38,4 +38,5 @@ icacls "C:\DomainAdminsShare\flag.txt" /grant "AD\Domain Admins:(F)"
 Write-Host "`nVerifying ACL for flag.txt..."
 icacls "C:\DomainAdminsShare\flag.txt"
 
-Write-Host "`nScript complete. The DomainAdminsShare is created, shared, and access is restricted to Domain Admins."
+# 7. Setup Complete
+Write-Host "`nScript completed successfully."
