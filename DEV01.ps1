@@ -76,7 +76,7 @@ Confirm-ManualStep "Install XAMPP for Windows:
 a. Go to: https://www.apachefriends.org/
 b. Click 'XAMPP for Windows' (the download may take a while to get started. Be patient).
 c. Double-click the XAMPP installer in the Downloads folder (this may take a while, be patient)
-d. Click 'Next' to choose the default options in the installer and confirm the UAC prompts that appear."
+d. Click 'Next' to choose the default options in the installer and confirm the UAC prompts."
 
 # ------------------- Steps 9 & 12 -------------------
 # First check if httpd.exe is found
@@ -471,7 +471,7 @@ Stop-Service -Name "Apache2.4" -Force -ErrorAction SilentlyContinue
 # ------------------- Step 25: Defender Exclusion -----------------------------
 try {
     Add-MpPreference -ExclusionPath "C:\MyService" -ErrorAction Stop
-    Write-Host "Action Needed: Confirm the UAC prompt to add the Windows Defender Exclusion for C:\MyService"
+    Write-Host "Action Needed: Confirm the Windows Defender Exclusion for C:\MyService"
 }
 catch {
     Write-Host "Unable to add Windows Defender Exclusion. Give Windows Security (Virus and Threat Protection) some more time to startup. Once it is started, run: Add-MpPreference -ExclusionPath 'C:\MyService'" -ForegroundColor Yellow
