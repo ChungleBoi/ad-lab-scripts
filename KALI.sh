@@ -161,3 +161,9 @@ echo "[*] Copying Ligolo proxy and agent.exe to ~/ligolo..."
 mkdir -p ~/ligolo
 cp /opt/Pivoting/Ligolo-NG/Linux/Proxy/proxy ~/ligolo/
 cp /opt/Pivoting/Ligolo-NG/Windows/Agent/agent.exe ~/ligolo/
+
+# ---------------------------------------------------------------------------
+# 13. Setup Complete
+# ---------------------------------------------------------------------------
+echo "[*] Script Completed Successfully. You may now change your network adapter to VMNet1 (the host-only adapter used by DC01)."
+echo "[*] Make sure to update your /etc/network/interfaces file and /etc/resolv.conf file."
