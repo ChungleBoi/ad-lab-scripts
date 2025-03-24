@@ -1,5 +1,15 @@
 Questions:
 
+
+ADMIN01: Why did we get an NT Authority shell?
+┌──(kali㉿kali)-[~]
+└─$ curl http://10.10.14.20/shell.php?cmd=whoami
+1       nt authority\system
+        3
+
+
+
+
 When we get Helen's password can we automatically connect to ADMIN02 or ADMIN01 given that Helen is a local admin on them?
 
 DMZ01: Before getting NT Authority, are we able to read Chris' PowerShell history file?
