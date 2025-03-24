@@ -103,23 +103,19 @@ New-NetFirewallRule -DisplayName "Allow DCOM and RPC" `
                     -Protocol TCP `
                     -LocalPort 135,49152-65535 | Out-Null
 
-# 4. Add a Windows Defender directory exclusion for 'C:\Users\Helen'
-Write-Host "`nAdding Defender exclusion for 'C:\Users\Helen'..."
-Add-MpPreference -ExclusionPath 'C:\Users\Helen'
-
-# 5. Create the C:\NewService folder (if missing) and copy in NewService.exe
+# 4. Create the C:\NewService folder (if missing) and copy in NewService.exe
 Write-Host "`nCreating 'C:\NewService' folder and copying NewService.exe..."
 New-Item -Path "C:\NewService" -ItemType Directory -Force | Out-Null
 Copy-Item -Path ".\NewService.exe" -Destination "C:\NewService" -Force
 
-# 6. Create the NewService service on ADMIN01, running as AD.LAB\Jamie
+# 5. Create the NewService service on ADMIN01, running as AD.LAB\Jamie
 Write-Host "`nCreating the 'NewService' service on ADMIN01..."
 sc.exe \\ADMIN01 create NewService binPath= "C:\NewService\NewService.exe" obj= "AD.LAB\Jamie" password= "digital99.3"
 
 Write-Host "`nChecking NewService configuration..."
 sc.exe \\ADMIN01 qc NewService
 
-# 7. Grant 'Log on as a service' right to AD.LAB\Jamie via secedit (using Start-Process -Wait).
+# 6. Grant 'Log on as a service' right to AD.LAB\Jamie via secedit (using Start-Process -Wait).
 function Grant-LogonAsServiceRight($account) {
     $tempDir  = "C:\Temp"
     $cfgFile  = Join-Path $tempDir "LogonAsService.inf"
@@ -165,7 +161,7 @@ function Grant-LogonAsServiceRight($account) {
 Write-Host "`nGranting 'Log on as a service' right to AD.LAB\Jamie..."
 Grant-LogonAsServiceRight "AD.LAB\Jamie"
 
-# 8. Start the new service and show any service.log
+# 7. Start the new service and show any service.log
 Write-Host "`nStarting 'NewService' on ADMIN01..."
 sc.exe \\ADMIN01 start NewService
 
@@ -179,4 +175,11 @@ if (Test-Path "C:\NewService\service.log") {
     Write-Host "No service.log found."
 }
 
-Write-Host "`nDone. The script has completed successfully."
+# 8. Add a Windows Defender directory exclusion for 'C:\Users\Helen'
+try {
+    Add-MpPreference -ExclusionPath "C:\Users\Helen" -ErrorAction Stop
+    Write-Host "Action Needed: Confirm the UAC prompt to add the Windows Defender Exclusion for C:\Users\Helen"
+}
+catch {
+    Write-Host "Unable to add Windows Defender Exclusion. Give Windows Security (Virus and Threat Protection) some more time to startup. Once it is started, run: Add-MpPreference -ExclusionPath 'C:\Users\Helen'" -ForegroundColor Yellow
+}
