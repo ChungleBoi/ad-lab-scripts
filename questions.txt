@@ -1,5 +1,6 @@
 Questions:
 
+KALI - Confirm memory is 4 GB
 
 ADMIN01: Why did we get an NT Authority shell?
 ┌──(kali㉿kali)-[~]
@@ -8,15 +9,15 @@ ADMIN01: Why did we get an NT Authority shell?
         3
 
 
-
-
-When we get Helen's password can we automatically connect to ADMIN02 or ADMIN01 given that Helen is a local admin on them?
+WEB02: Before getting NT Authority, are we able to check the MP preference to see which directories have an exclusion? Are we able to set an exclusion?
+Confirm that registry download works
 
 DMZ01: Before getting NT Authority, are we able to read Chris' PowerShell history file?
 
 
-WEB02: Before getting NT Authority, are we able to check the MP preference to see which directories have an exclusion? Are we able to set an exclusion?
-Confirm that registry download works
+When we get Helen's password can we automatically connect to ADMIN02 or ADMIN01 given that Helen is a local admin on them?
+
+
 ERROR: A required privilege is not held by the client.
 Why is a required privilege not held? Was this a fluke? Or does WEB02 need to be rebooted and re-backed-up?
 
