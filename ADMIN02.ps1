@@ -43,4 +43,5 @@ Get-Item WSMan:\localhost\Client\TrustedHosts
 # 7. Enable Windows Remote Management through the firewall
 netsh advfirewall firewall set rule group="Windows Remote Management" new enable=Yes
 
+# 8. Setup Complete
 Write-Host "Script completed successfully."
