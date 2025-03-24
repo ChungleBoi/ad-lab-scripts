@@ -1,5 +1,7 @@
 Questions:
 
+When we get Helen's password can we automatically connect to ADMIN02 or ADMIN01 given that Helen is a local admin on them?
+
 DMZ01: Before getting NT Authority, are we able to read Chris' PowerShell history file?
 
 
@@ -25,3 +27,4 @@ DC01 - Run to make sure the 2 prompts at the beginning work
 
 pentest-report.txt quarantined by Windows Defender
 Ensure you set a defender exclusion before you unzip the project on your PC
+
