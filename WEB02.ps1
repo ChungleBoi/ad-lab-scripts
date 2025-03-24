@@ -228,3 +228,6 @@ try {
 catch {
     Write-Host "Unable to add Windows Defender Exclusion. Give Windows Security (Virus and Threat Protection) some more time to startup. Once it is started, run: Add-MpPreference -ExclusionPath 'C:\Users\Public'" -ForegroundColor Yellow
 }
+
+# Step 19: Log in as Betty, to cache a domain credential
+Write-Host "Setup complete. Finally, log in as Betty, to cache a domain credential."
