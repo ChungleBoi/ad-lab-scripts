@@ -167,3 +167,6 @@ Write-Host "Send-MailMessage -SmtpServer 'MAIL01' -From 'administrator@ad.lab' -
 Write-Host "" -ForegroundColor Magenta
 Write-Host "Copy and paste the above command at your PowerShell prompt, then press ENTER." -ForegroundColor Magenta
 Write-Host "This ensures it appears in your PSReadLine console history." -ForegroundColor Magenta
+
+# ------------------- Step 13. Script Complete -------------------
+Write-Host "Script completed successfully."
