@@ -476,3 +476,6 @@ try {
 catch {
     Write-Host "Unable to add Windows Defender Exclusion. Give Windows Security (Virus and Threat Protection) some more time to startup. Once it is started, run: Add-MpPreference -ExclusionPath 'C:\MyService'" -ForegroundColor Yellow
 }
+
+# ------------------- Step 26: Setup Complete -------------------
+Write-Host "Script completed successfully."
