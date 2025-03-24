@@ -61,4 +61,4 @@ Step 5: Final steps
 4. DEV01 - Script Execution Requirement (After restarting and getting the reverse shell): Start Apache and MySQL (Delete this line if you update the pentest report step).
 4. MAIL01 - Create the PowerShell shortcut file and transfer it back to Kali
 5. ADMIN02 - Download Instructions.docx to Helen's home directory, prior to running script
-6. Ensure the Domain Controller (DC01) is on and you can connect to it from Kali.
+6. Ensure the Domain Controller (DC01) is on and you can connect to it from Kali. Instructions in KALI.txt
