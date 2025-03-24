@@ -120,20 +120,21 @@ if (Test-Path "C:\xampp\apache\bin\httpd.exe") {
 
 # ------------------- Steps 14-16: MySQL Database/User Setup -------------------
 Confirm-ManualStep "Configure MySQL via phpMyAdmin:
-1. Start MySQL in XAMPP Control Panel and click 'Allow' on the UAC Prompt for mysqld.
-2. Open your web browser and navigate to http://localhost/phpmyadmin.
-3. Click the 'Databases' tab.
+1. Close and Reopen XAMPP Control Panel
+2. Start MySQL in XAMPP Control Panel and click 'Allow' on the UAC Prompt for mysqld.
+3. Open your web browser and navigate to http://localhost/phpmyadmin.
+4. Click the 'Databases' tab.
    - In the 'Database name' field, type 'wp_lab' and click 'Create'.
-4. Return to the phpMyAdmin home page by clicking the 'phpMyAdmin' icon.
-5. Click the 'User accounts' tab, then click 'Add User Account' under 'New'.
-6. Under 'Add User Account', enter the following:
+5. Return to the phpMyAdmin home page by clicking the 'phpMyAdmin' icon.
+6. Click the 'User accounts' tab, then click 'Add User Account' under 'New'.
+7. Under 'Add User Account', enter the following:
    - User Name: mysql
    - Host name: localhost
    - Password: Password123 (enter it twice)
    - Click 'Go'.
-7. Click 'User accounts' and then click 'mysql'
-8. Click 'Database', select 'wp_lab' from the dropdown and click 'Go'.
-9. Select the checkbox next to 'Check all', for 'Database Specific Privileges' and click 'Go'."
+8. Click 'User accounts' and then click 'mysql'
+9. Click 'Database', select 'wp_lab' from the dropdown and click 'Go'.
+10. Select the checkbox next to 'Check all', for 'Database Specific Privileges' and click 'Go'."
 
 # ------------------- Step 17 -------------------
 $wordpressZip = "$env:TEMP\wordpress.zip"
