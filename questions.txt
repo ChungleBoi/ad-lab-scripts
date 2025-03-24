@@ -1,31 +1,16 @@
 Questions:
 
+Download nc.exe to the current directory before using it
+
+Change start a python3 http server to "Confirm the Python3 HTTP Server is still Running"
+
 KALI - Confirm memory is 4 GB
 
-WEB01: Why did we get an NT Authority shell?
-┌──(kali㉿kali)-[~]
-└─$ curl http://10.10.14.20/shell.php?cmd=whoami
-1       nt authority\system
-        3
+
+ADMIN03: When we get Helen's password can we automatically connect to ADMIN02 or ADMIN01 given that Helen is a local admin on them?
 
 
-WEB02: 
-
-Problem: I didn't sign in as Betty
-
-Question 1: Before getting NT Authority, are we able to check the MP preference to see which directories have an exclusion? Are we able to set an exclusion?
-Question 2: nc.exe command copy to the current directory is not in pentesting report. This is because it was expected to already be in the directory. Is this best practice? Should I remove the python3 http server or put at the top of the command "you only need to start this if you don't already have a server started"?
-
-DMZ01: 
-Question 1:Before getting NT Authority, are we able to read Chris' PowerShell history file?
-When we get Helen's password can we automatically connect to ADMIN02 or ADMIN01 given that Helen is a local admin on them?
-
-MAIL01: Problem: Smart Host was set to 10.10.14.80
-
-
-
-
-Overall: Are there any computers that we need to take actions on after they are already booted?
+DMZ01 - You may need to log in first before you can Evil-WinRM connect
 
 
 ----------------------------------------------------------------------
