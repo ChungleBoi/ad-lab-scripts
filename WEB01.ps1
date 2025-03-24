@@ -1,10 +1,11 @@
 # ============================================================
-# Deploy_XAMPP_LoginSystem_Setup.ps1
+# Deploy_XAMPP_LoginSystem_Setup.ps1 (Updated)
 #
-# This script automates parts of the XAMPP login system setup
-# and configures Apache and MySQL to run as Windows services at startup
+# This updated script automates parts of the XAMPP login system setup,
+# configures Apache and MySQL to run as Windows services at startup
 # under the 'aaron' user account (instead of NT AUTHORITY\SYSTEM),
-# thereby avoiding the UAC prompt on startup.
+# and pre-validates/fixes the Apache configuration as well as grants the
+# necessary “Log on as a service” right to the user.
 #
 # NOTE: Run this script as Administrator.
 # ============================================================
@@ -16,7 +17,78 @@ function Confirm-ManualStep($stepDescription) {
     do {
         $response = Read-Host "After completing the above step, type 'Y' to continue"
     } while ($response -notin @("Y", "y"))
-    Write-Host "..."
+    Write-Host ""
+}
+
+# Function to test Apache configuration
+function Check-ApacheConfig {
+    $httpdExe = "C:\xampp\apache\bin\httpd.exe"
+    Write-Host "Testing Apache configuration using: $httpdExe -t"
+    $testOutput = & $httpdExe -t 2>&1
+    Write-Host "Apache config test output:" $testOutput
+    return $testOutput
+}
+
+# Function to fix Apache configuration errors (e.g. missing ServerName)
+function Fix-ApacheConfig {
+    $httpdConfPath = "C:\xampp\apache\conf\httpd.conf"
+    if (Test-Path $httpdConfPath) {
+        Write-Host "Reviewing $httpdConfPath for ServerName directive..."
+        $confContent = Get-Content $httpdConfPath
+        $hasServerName = $false
+        foreach ($line in $confContent) {
+            if ($line -match "^\s*ServerName\s+") {
+                $hasServerName = $true
+                break
+            }
+        }
+        if (-not $hasServerName) {
+            Write-Host "ServerName directive not found in httpd.conf. Appending 'ServerName localhost'..."
+            Add-Content -Path $httpdConfPath -Value "`nServerName localhost`n"
+        }
+        else {
+            # If found but commented, attempt to uncomment it.
+            $confContentModified = $confContent -replace "^\s*#\s*(ServerName\s+.+)", '$1'
+            Set-Content -Path $httpdConfPath -Value $confContentModified -Encoding UTF8
+            Write-Host "Uncommented any commented ServerName directive in httpd.conf."
+        }
+    }
+    else {
+        Write-Error "httpd.conf not found at $httpdConfPath. Exiting."
+        exit
+    }
+}
+
+# Function to grant "Log on as a service" right to a user account.
+function Grant-LogonAsServiceRight {
+    param(
+        [Parameter(Mandatory=$true)]
+        [string]$Account
+    )
+    Write-Host "Granting 'Log on as a service' right to $Account..."
+    $tempInf = "$env:TEMP\temp.inf"
+    $tempSdb = "$env:TEMP\temp.sdb"
+    # Export current security settings to a temp file.
+    secedit /export /cfg $tempInf | Out-Null
+    $content = Get-Content $tempInf
+    $modifiedContent = $content | ForEach-Object {
+        if ($_ -match "^SeServiceLogonRight") {
+            if ($_ -notmatch $Account) {
+                if ($_ -match "=") {
+                    $_ = $_ + ",$Account"
+                }
+                else {
+                    $_ = "SeServiceLogonRight = $Account"
+                }
+            }
+        }
+        $_
+    }
+    $modifiedContent | Set-Content $tempInf
+    # Reapply the modified security settings.
+    secedit /configure /db $tempSdb /cfg $tempInf /areas USER_RIGHTS | Out-Null
+    Remove-Item $tempInf, $tempSdb -Force
+    Write-Host "'Log on as a service' right granted to $Account."
 }
 
 # --- Ensure the script is running with elevated privileges ---
@@ -41,6 +113,25 @@ c. Double-click the XAMPP installer in the Downloads folder (this may take a whi
 d. Click 'Next' to choose the default options in the installer and confirm the UAC prompt that appears.
 Please ensure XAMPP is properly installed before continuing."
     }
+
+    # ------------------- Pre-check and Fix Apache Configuration -------------------
+    $apacheTest = Check-ApacheConfig
+    if ($apacheTest -notmatch "Syntax OK") {
+        Write-Host "Apache configuration errors detected. Attempting automatic fix..."
+        Fix-ApacheConfig
+        # Re-test configuration
+        $apacheTest = Check-ApacheConfig
+        if ($apacheTest -notmatch "Syntax OK") {
+            Write-Error "Apache configuration still has errors after automatic fix. Please review httpd.conf manually."
+            exit
+        }
+    }
+    else {
+        Write-Host "Apache configuration syntax is OK."
+    }
+
+    # ------------------- Grant 'Log on as a service' Right to ad\aaron -------------------
+    Grant-LogonAsServiceRight -Account "ad\aaron"
 
     # ------------------- Step 5: Enable Apache and MySQL at Startup -------------------
     Write-Host "Installing Apache service..."
@@ -122,10 +213,10 @@ d. Click 'Query' to reload the page and confirm the SQL connection."
 $indexPhpContent = @'
 <?php
 // Database configuration
-$dbHost = 'localhost';
-$dbUser = 'root';
-$dbPass = 'tt.r.2006';
-$dbName = 'login_system';
+$dbHost = "localhost";
+$dbUser = "root";
+$dbPass = "tt.r.2006";
+$dbName = "login_system";
 
 // Create connection
 $conn = new mysqli($dbHost, $dbUser, $dbPass, $dbName);
@@ -136,10 +227,10 @@ if ($conn->connect_error) {
 }
 
 // Intentionally vulnerable code
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
     // Directly using user input in the query, no sanitization
-    $username = $_POST['username'];
-    $password = $_POST['password'];
+    $username = $_POST["username"];
+    $password = $_POST["password"];
 
     // This query remains vulnerable to SQL injection: "' OR '1'='1" etc.
     $sql = "SELECT * FROM users WHERE username='$username' AND password=MD5('$password')";
@@ -193,7 +284,7 @@ Set-Content -Path "C:\xampp\htdocs\index.html" -Value $indexHtmlContent -Encodin
 # ------------------- Step 13: Add Windows Defender Exclusion -------------------
 try {
     Add-MpPreference -ExclusionPath "C:\xampp\htdocs" -ErrorAction Stop
-    Write-Host "Step 13: Action Needed: Confirm the Windows Defender Exclusion for C:\xampp\htdocs"
+    Write-Host "Step 13: Windows Defender Exclusion for C:\xampp\htdocs added."
 }
 catch {
     Write-Host "Unable to add Windows Defender Exclusion. Give Windows Security time to startup. Once it is started, run: Add-MpPreference -ExclusionPath 'C:\xampp\htdocs'" -ForegroundColor Yellow
