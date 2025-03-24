@@ -3,7 +3,8 @@
 #
 # This script automates parts of the XAMPP login system setup
 # and configures Apache and MySQL to run as Windows services at startup
-# under the 'aaron' user account
+# under the 'aaron' user account (instead of NT AUTHORITY\SYSTEM),
+# thereby avoiding the UAC prompt on startup.
 #
 # NOTE: Run this script as Administrator.
 # ============================================================
@@ -15,7 +16,7 @@ function Confirm-ManualStep($stepDescription) {
     do {
         $response = Read-Host "After completing the above step, type 'Y' to continue"
     } while ($response -notin @("Y", "y"))
-    Write-Host ""
+    Write-Host "..."
 }
 
 # --- Ensure the script is running with elevated privileges ---
@@ -54,7 +55,7 @@ Please ensure XAMPP is properly installed before continuing."
     Write-Host "Setting MySQL service to start automatically..."
     Set-Service -Name "mysql" -StartupType Automatic
 
-    # ------------------- New Step: Configure Services to Run as 'aaron' -------------------
+    # ------------------- Configure Services to Run as 'aaron' -------------------
     Write-Host "`nConfiguring services to run under the 'aaron' user account with the hard-coded password."
     $plainPassword = "tt.r.2006"
 
