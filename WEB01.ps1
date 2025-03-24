@@ -25,33 +25,45 @@ if (-not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdent
     exit
 }
 
-# ------------------- Step 4: Install XAMPP for Windows -------------------
-Confirm-ManualStep "Install XAMPP for Windows:
+# ------------------- Step 4: Check for Existing XAMPP Services -------------------
+$apacheService = Get-Service -Name "Apache2.4" -ErrorAction SilentlyContinue
+$mysqlService = Get-Service -Name "mysql" -ErrorAction SilentlyContinue
+
+if ($apacheService -and $mysqlService) {
+    Write-Host "XAMPP services are already installed. Skipping installation steps."
+} else {
+    # ------------------- Verify XAMPP Installation -------------------
+    # Loop until the required XAMPP executables are found
+    while (-not (Test-Path "C:\xampp\apache\bin\httpd.exe" -and Test-Path "C:\xampp\mysql\bin\mysqld.exe")) {
+        Confirm-ManualStep "Install XAMPP for Windows:
 a. Go to: https://www.apachefriends.org/
 b. Click 'XAMPP for Windows' (the download may take a while to get started. Be patient).
-c. Double-click the XAMPP installer in the Downloads folder (this may take a while, be patient)
-d. Click 'Next' to choose the default options in the installer and confirm the UAC prompt that appears."
+c. Double-click the XAMPP installer in the Downloads folder (this may take a while, be patient).
+d. Click 'Next' to choose the default options in the installer and confirm the UAC prompt that appears.
+Please ensure XAMPP is properly installed before continuing."
+    }
 
-# ------------------- Step 5: Enable Apache and MySQL at Startup -------------------
-Write-Host "Installing Apache service..."
-& "C:\xampp\apache\bin\httpd.exe" -k install
+    # ------------------- Step 5: Enable Apache and MySQL at Startup -------------------
+    Write-Host "Installing Apache service..."
+    & "C:\xampp\apache\bin\httpd.exe" -k install
 
-Write-Host "Installing MySQL service..."
-& "C:\xampp\mysql\bin\mysqld.exe" --install
+    Write-Host "Installing MySQL service..."
+    & "C:\xampp\mysql\bin\mysqld.exe" --install
 
-Write-Host "Setting Apache service to start automatically..."
-Set-Service -Name "Apache2.4" -StartupType Automatic
+    Write-Host "Setting Apache service to start automatically..."
+    Set-Service -Name "Apache2.4" -StartupType Automatic
 
-Write-Host "Setting MySQL service to start automatically..."
-Set-Service -Name "mysql" -StartupType Automatic
+    Write-Host "Setting MySQL service to start automatically..."
+    Set-Service -Name "mysql" -StartupType Automatic
 
-Write-Host "Starting Apache service..."
-Start-Service -Name "Apache2.4"
+    Write-Host "Starting Apache service..."
+    Start-Service -Name "Apache2.4"
 
-Write-Host "Starting MySQL service..."
-Start-Service -Name "mysql"
+    Write-Host "Starting MySQL service..."
+    Start-Service -Name "mysql"
 
-Write-Host "Apache and MySQL services have been installed and started with automatic startup. No UAC prompt will be required on system startup."
+    Write-Host "Apache and MySQL services have been installed and started with automatic startup. No UAC prompt will be required on system startup."
+}
 
 # ------------------- Step 6: Create MySQL Database 'login_system' -------------------
 Confirm-ManualStep "Create a MySQL database named 'login_system':
@@ -172,10 +184,10 @@ Set-Content -Path "C:\xampp\htdocs\index.html" -Value $indexHtmlContent -Encodin
 # ------------------- Step 13: Add Windows Defender Exclusion -------------------
 try {
     Add-MpPreference -ExclusionPath "C:\xampp\htdocs" -ErrorAction Stop
-    Write-Host "Action Needed: Confirm the UAC prompt to add the Windows Defender Exclusion for C:\xampp\htdocs"
+    Write-Host "Step 13: Windows Defender exclusion added for C:\xampp\htdocs"
 }
 catch {
-    Write-Host "Unable to add Windows Defender Exclusion. Give Windows Security (Virus and Threat Protection) some more time to startup. Once it is started, run: Add-MpPreference -ExclusionPath 'C:\xampp\htdocs'" -ForegroundColor Yellow
+    Write-Host "Unable to add Windows Defender Exclusion. Give Windows Security time to startup. Once it is started, run: Add-MpPreference -ExclusionPath 'C:\xampp\htdocs'" -ForegroundColor Yellow
 }
 
 # ------------------- Step 14: Setup Complete -------------------
