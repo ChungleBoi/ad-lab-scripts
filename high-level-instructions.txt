@@ -41,7 +41,7 @@ ADMIN01 - 10.10.14.180                 Log in as: Helen: chase#1 (Local Admin)
 FILES01 - 10.10.14.200                 Log in as: Issac: passw0rd!! (Local Admin)
 6. To make a user a local admin, open an elevated PowerShell (using Domain Admin credentials in the UAC prompt), and run the following command
 net localgroup Administrators /add ad\[User]
-7. Then restart the computer. After reboot, you will be able to open an elevated PowerShell session, as the user added to the Local Administrations group.
+7. Then restart the computer. After reboot, you will be able to open an elevated PowerShell session, given the user is a member of the Local Administrations group.
 
 
 Step 4: Set up Attack Boxes using their PowerShell scripts
