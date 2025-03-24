@@ -230,4 +230,4 @@ catch {
 }
 
 # Step 19: Log in as Betty, to cache a domain credential
-Write-Host "Setup complete. Finally, log in as Betty, to cache a domain credential."
+Write-Host "Script completed successfully. Finally, log in as Betty, to cache a domain credential."
