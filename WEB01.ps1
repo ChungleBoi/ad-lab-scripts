@@ -3,8 +3,7 @@
 #
 # This script automates parts of the XAMPP login system setup
 # and configures Apache and MySQL to run as Windows services at startup
-# under the 'aaron' user account (instead of NT AUTHORITY\SYSTEM),
-# thereby avoiding the UAC prompt on startup.
+# under the 'aaron' user account
 #
 # NOTE: Run this script as Administrator.
 # ============================================================
@@ -59,11 +58,11 @@ Please ensure XAMPP is properly installed before continuing."
     Write-Host "`nConfiguring services to run under the 'aaron' user account with the hard-coded password."
     $plainPassword = "tt.r.2006"
 
-    Write-Host "Configuring Apache service to run as .\aaron..."
-    sc.exe config "Apache2.4" obj= ".\aaron" password= $plainPassword
+    Write-Host "Configuring Apache service to run as ad\aaron..."
+    sc.exe config "Apache2.4" obj= "ad\aaron" password= $plainPassword
 
-    Write-Host "Configuring MySQL service to run as .\aaron..."
-    sc.exe config "mysql" obj= ".\aaron" password= $plainPassword
+    Write-Host "Configuring MySQL service to run as ad\aaron..."
+    sc.exe config "mysql" obj= "ad\aaron" password= $plainPassword
 
     Write-Host "Starting Apache service..."
     Start-Service -Name "Apache2.4"
