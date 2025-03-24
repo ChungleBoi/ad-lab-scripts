@@ -22,8 +22,5 @@ Instructions (while completing setup):
 
 
 Instructions (after completing setup): 
-Sign in as Betty to cache a domain credential
-
-
-Ensure this Defender exclusion is applied:
-Add-MpPreference -ExclusionPath "C:\Users\Public"
+1. Ensure this Defender exclusion is applied: Add-MpPreference -ExclusionPath "C:\Users\Public"
+2. Sign in as Betty to cache a domain credential
