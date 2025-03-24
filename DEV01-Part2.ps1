@@ -108,3 +108,6 @@ $pythonScript = $pythonScript -replace 'EXTERNAL_IP_PLACEHOLDER', $ip
 Set-Content -Path "receiver.py" -Value $pythonScript
 
 Write-Host "receiver.py created successfully with external IP set to $ip."
+
+# Step 7: Setup Complete
+Write-Host "Script completed successfully."
