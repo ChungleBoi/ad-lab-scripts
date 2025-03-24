@@ -169,7 +169,12 @@ Write-Host "Step 12: Creating index.html in C:\xampp\htdocs\index.html..."
 Set-Content -Path "C:\xampp\htdocs\index.html" -Value $indexHtmlContent -Encoding UTF8
 
 # ------------------- Step 13: Add Windows Defender Exclusion -------------------
-Write-Host "Step 13: Adding Windows Defender exclusion for C:\xampp\htdocs..."
-Add-MpPreference -ExclusionPath "C:\xampp\htdocs"
+try {
+    Add-MpPreference -ExclusionPath "C:\xampp\htdocs" -ErrorAction Stop
+    Write-Host "Action Needed: Confirm the UAC prompt to add the Windows Defender Exclusion for C:\xampp\htdocs"
+}
+catch {
+    Write-Host "Unable to add Windows Defender Exclusion. Give Windows Security (Virus and Threat Protection) some more time to startup. Once it is started, run: Add-MpPreference -ExclusionPath 'C:\xampp\htdocs'" -ForegroundColor Yellow
+}
 
 Write-Host "XAMPP Login System setup script completed."
