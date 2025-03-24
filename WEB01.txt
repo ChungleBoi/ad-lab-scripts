@@ -16,5 +16,5 @@ Log in as: ad\aaron
 Make Aaron a local administrator
 
 
-Ensure this Defender exclusion is applied:
-Add-MpPreference -ExclusionPath "C:\xampp\htdocs"
+Instructions (after completing setup): 
+1. Ensure this Defender exclusion is applied: Add-MpPreference -ExclusionPath "C:\xampp\htdocs"
