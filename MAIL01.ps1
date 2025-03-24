@@ -59,3 +59,6 @@ catch {
     Write-Error "SMTP Relay test email failed to send. $_"
     exit 1
 }
+
+# Setup Complete
+Write-Host "Script completed successfully."
