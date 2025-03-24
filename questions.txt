@@ -11,11 +11,11 @@ WEB01: Why did we get an NT Authority shell?
 
 WEB02: 
 nc.exe command copy to the current directory is not in pentesting report.
+I didn't sign in as Betty
 Before getting NT Authority, are we able to check the MP preference to see which directories have an exclusion? Are we able to set an exclusion?
 Confirm that registry download works
 
 DMZ01: 
-I didn't sign in as Betty
 Before getting NT Authority, are we able to read Chris' PowerShell history file?
 
 
