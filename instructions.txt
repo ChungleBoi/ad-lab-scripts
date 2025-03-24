@@ -4,11 +4,15 @@ When creating the new virtual machines in VMWare, set the encryption password to
 In the Virtual Machine Settings, Under "Device status", enable "Connect at power on". This is required to boot from the ISO image.
 
 Step 1: Initialize Domain Controller
-- Ensure only 1 (VMNet1) Network Adapter is Set in VMWare.
-- Continue running the DC01.ps1 script after reboots.
-- When the setup is complete, the script will output "Setup Complete".
-- Once the setup is complete, you can add a second (NAT) network adapter and sync the DC with an external time source
-- Ensure the Domain Controller continues to run at all times
+1. Download Windows Server 2025: https://www.microsoft.com/en-us/evalcenter/download-windows-server-2025
+2. In the Virtual Machine Settings, insert the ISO. Under "Device status", enable "Connect at power on".
+3. Boot and Install Windows Server 2025 (Desktop Edition).
+4. Fully Update the System and Install VMWare Tools
+5. Shut down, change the network adapter to VMNet1 (Host Only). Do not set a second network adapter.
+6. Boot the VM and run the DC01.ps1 script. Continue running the script after the computer restarts.
+7. When the setup is complete, the script will output "Setup Complete".
+8. Add a second (NAT) network adapter and sync the domain controller with an external time source
+9. Keep the domain controller (DC01) running at all times.
 
 
 Step 2: Initialize Kali
