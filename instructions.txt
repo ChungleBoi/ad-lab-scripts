@@ -62,4 +62,6 @@ Step 5: Final steps
 1. WEB02 - Log in as Betty, to cache a domain credential.
 2. DMZ01 - Manually run the "Send-Email" command in PowerShell, to save the clue to the history file.
 3. DEV01 - After running DEV01.ps1, log in as Daniela and run DEV01-Part2.ps1
-4. ADMIN02 - Download Instructions.docx to Helen's home directory, prior to running script
+4. DEV01 - Script Execution Requirement (After restarting and getting the reverse shell): Start Apache and MySQL (Delete this line if you update the pentest report step).
+4. MAIL01 - Create the PowerShell shortcut file and transfer it back to Kali
+5. ADMIN02 - Download Instructions.docx to Helen's home directory, prior to running script
