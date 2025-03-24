@@ -55,9 +55,10 @@ Write-Host "Apache and MySQL services have been installed and started with autom
 
 # ------------------- Step 6: Create MySQL Database 'login_system' -------------------
 Confirm-ManualStep "Create a MySQL database named 'login_system':
-a. Click 'Admin' next to 'MySQL' in XAMPP Control Panel.
-b. Click 'Databases' in the phpMyAdmin window.
-c. Type 'login_system' in the text entry box and click 'Create'."
+a. Close and Reopen XAMPP Control Panel.
+b. Click 'Admin' next to 'MySQL' in XAMPP Control Panel.
+c. Click 'Databases' in the phpMyAdmin window.
+d. Type 'login_system' in the text entry box and click 'Create'."
 
 # ------------------- Step 7: Create the Users Table -------------------
 Write-Host "`nStep 7: Create the Users table by running the following SQL query in phpMyAdmin:"
