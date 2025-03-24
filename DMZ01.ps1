@@ -151,7 +151,7 @@ Start-Sleep 1
 Write-Host "`n===== Step 11: Defender exclusion =====" -ForegroundColor Cyan
 try {
     Add-MpPreference -ExclusionPath "C:\MyApps" -ErrorAction Stop
-    Write-Host "Action Needed: Confirm the UAC prompt to add the Windows Defender Exclusion for C:\MyApps"
+    Write-Host "Action Needed: Confirm the Windows Defender Exclusion for C:\MyApps"
 }
 catch {
     Write-Host "Unable to add Windows Defender Exclusion. Give Windows Security (Virus and Threat Protection) some more time to startup. Once it is started, run: Add-MpPreference -ExclusionPath 'C:\MyApps'" -ForegroundColor Yellow
