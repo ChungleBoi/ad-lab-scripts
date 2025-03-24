@@ -182,7 +182,7 @@ Set-Content -Path "C:\xampp\htdocs\index.html" -Value $indexHtmlContent -Encodin
 # ------------------- Step 13: Add Windows Defender Exclusion -------------------
 try {
     Add-MpPreference -ExclusionPath "C:\xampp\htdocs" -ErrorAction Stop
-    Write-Host "Step 13: Windows Defender exclusion added for C:\xampp\htdocs"
+    Write-Host "Step 13: Action Needed: Confirm the Windows Defender Exclusion for C:\xampp\htdocs"
 }
 catch {
     Write-Host "Unable to add Windows Defender Exclusion. Give Windows Security time to startup. Once it is started, run: Add-MpPreference -ExclusionPath 'C:\xampp\htdocs'" -ForegroundColor Yellow
