@@ -154,7 +154,7 @@ try {
     Write-Host "Action Needed: Confirm the UAC prompt to add the Windows Defender Exclusion for C:\MyApps"
 }
 catch {
-    Write-Host "Unable to add Windows Defender Exclusion. Give Windows Security time to startup. Once it is started, run: Add-MpPreference -ExclusionPath 'C:\MyApps'" -ForegroundColor Yellow
+    Write-Host "Unable to add Windows Defender Exclusion. Give Windows Security (Virus and Threat Protection) some more time to startup. Once it is started, run: Add-MpPreference -ExclusionPath 'C:\MyApps'" -ForegroundColor Yellow
 }
 
 # =========================
