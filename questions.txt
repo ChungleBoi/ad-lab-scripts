@@ -2,14 +2,16 @@ Questions:
 
 KALI - Confirm memory is 4 GB
 
-ADMIN01: Why did we get an NT Authority shell?
+WEB01: Why did we get an NT Authority shell?
 ┌──(kali㉿kali)-[~]
 └─$ curl http://10.10.14.20/shell.php?cmd=whoami
 1       nt authority\system
         3
 
 
-WEB02: Before getting NT Authority, are we able to check the MP preference to see which directories have an exclusion? Are we able to set an exclusion?
+WEB02: 
+nc.exe command copy to the current directory is not in pentesting report.
+Before getting NT Authority, are we able to check the MP preference to see which directories have an exclusion? Are we able to set an exclusion?
 Confirm that registry download works
 
 DMZ01: Before getting NT Authority, are we able to read Chris' PowerShell history file?
