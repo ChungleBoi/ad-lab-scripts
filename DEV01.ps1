@@ -44,9 +44,6 @@ if (-not $skipSteps4to7) {
     Write-Host "Step 4: Creating application root directory at C:\MyService..."
     New-Item -Path "C:\MyService" -ItemType Directory -Force
 
-    Write-Host "Adding Windows Defender exclusion for C:\MyService..."
-    Add-MpPreference -ExclusionPath "C:\MyService" -ErrorAction SilentlyContinue
-
     # ------------------- Step 5 -------------------
     Write-Host "Step 5: Creating dummy program.exe in C:\MyService..."
     $dummyContent = "This is a dummy executable for demonstration purposes."
@@ -470,3 +467,12 @@ Get-Process mysqld | Stop-Process -Force -ErrorAction SilentlyContinue
 
 Write-Host "Attempting to stop Apache service..."
 Stop-Service -Name "Apache2.4" -Force -ErrorAction SilentlyContinue
+
+# ------------------- Step 25: Defender Exclusion -----------------------------
+try {
+    Add-MpPreference -ExclusionPath "C:\MyService" -ErrorAction Stop
+    Write-Host "Action Needed: Confirm the UAC prompt to add the Windows Defender Exclusion for C:\MyService"
+}
+catch {
+    Write-Host "Unable to add Windows Defender Exclusion. Give Windows Security (Virus and Threat Protection) some more time to startup. Once it is started, run: Add-MpPreference -ExclusionPath 'C:\MyService'" -ForegroundColor Yellow
+}
