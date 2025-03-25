@@ -88,7 +88,7 @@ if (!(Test-Path "C:\xampp\apache\bin\httpd.exe")) {
 a. Go to: https://www.apachefriends.org/
 b. Click 'XAMPP for Windows' (the download may take a while to get started. Be patient).
 c. Double-click the XAMPP installer in the Downloads folder (this may take a while, be patient)
-d. Click 'Next' to choose the default options in the installer and confirm the UAC prompt that appears."
+d. Click 'Next' to choose the default options in the installer and confirm the UAC prompts."
 }
 
 # After the second prompt, check again
