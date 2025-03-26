@@ -59,6 +59,7 @@ Step 5: Final steps
 2. DMZ01 - Manually run the "Send-Email" command in PowerShell, to save the clue to the history file.
 3. DEV01 - After running DEV01.ps1, log in as Daniela and run DEV01-Part2.ps1 = Continue running DEV01-Part2.ps1, until the script outputs that the script has completed.
 4. DEV01 - Script Execution Requirement (After restarting and getting the reverse shell): Start Apache and MySQL (Delete this line if you update the pentest report step).
-4. MAIL01 - Create the PowerShell shortcut file and transfer it back to Kali
-5. ADMIN02 - Download Instructions.docx to Helen's home directory, prior to running script
-6. Ensure the Domain Controller (DC01) is on and you can connect to it from Kali. Instructions in KALI.txt
+4. MAIL01 - Restart the mail server after running the SWAKS command, if the SWAKS command outputs that the mail was queued for delivery, but you don't get the reverse shell.
+5. ADMIN02 - Download Instructions.docx to Helen's home directory, prior to running script.
+6. KALI - Delete Instructions.docx in Kali, after downloading it to ADMIN02.
+6. DC01 - Ensure the Domain Controller (DC01) is running and Kali can connect to it.
