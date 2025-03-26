@@ -52,6 +52,7 @@ if (-not $skipSteps4to7) {
     # ------------------- Step 6 -------------------
     Write-Host "Step 6: Creating service 'MyService'..."
     New-Service -Name "MyService" -BinaryPathName "C:\MyService\program.exe" -DisplayName "MyService" -StartupType Automatic
+    sc.exe config MyService start= delayed-auto
 
     Write-Host "Verifying service configuration..."
     sc.exe qc MyService
