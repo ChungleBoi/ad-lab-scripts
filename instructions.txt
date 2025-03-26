@@ -25,12 +25,13 @@ Step 3: Join Member Workstations to the Domain using domain-join.ps1 PowerShell 
 1. Download Windows Server 2025 (https://www.microsoft.com/en-us/evalcenter/download-windows-11-enterprise) and Windows Server 2022: (https://www.microsoft.com/en-us/evalcenter/download-windows-server-2022)
 2. Create a new Virtual Machine in VMWare. Set the encryption password to password123!! (this will allow you to start up the VMs on a different device)
 3. In the Virtual Machine Setup, choose Windows 11 Enterprise as the version (except MAIL01 uses Windows Server 2022). 
-4. In the Virtual Machine Settings, attach the ISO. Under "Device status", enable "Connect at power on".
-5. Boot and Install Windows 11 Enterprise (all workstations, except MAIL01) / Windows Server 2022 (MAIL01). Set the Username to "LocalUser" and the Password to "password123!!"
-6. Ensure the first network adapter is set to VMNet1 and the second network adapter is set to NAT
-7. Disable tamper protection in Windows Defender (Virus & Threat Protection)
-8. Set the computer to never go to sleep.
-9. Here are the computer names and corresponding IP addresses. You will input these when running the domain-join.ps1 script.
+4. In the Virtual Machine Settings, set the memory to 4 GB for all VMs. EXCEPT on WEB02 and DEV01, set the memory to 6 GB.
+5. In the Virtual Machine Settings, attach the ISO. Under "Device status", enable "Connect at power on".
+6. Boot and Install Windows 11 Enterprise (all workstations, except MAIL01) / Windows Server 2022 (MAIL01). Set the Username to "LocalUser" and the Password to "password123!!"
+7. Ensure the first network adapter is set to VMNet1 and the second network adapter is set to NAT
+8. Disable tamper protection in Windows Defender (Virus & Threat Protection)
+9. Set the computer to never go to sleep.
+10. Here are the computer names and corresponding IP addresses. You will input these when running the domain-join.ps1 script.
 Computer names and corresponding host IPs:
 WEB01 - 10.10.14.20                    Log in as: Aaron: tt.r.2006 (Local Admin)
 WEB02 - 10.10.14.40                    Log in as: iis_service: daisy_3 (Local Admin); Betty: pinky.1995 (Standard User)
@@ -42,9 +43,9 @@ ADMIN03 - 10.10.14.140                 Log in as: Francesca: bubbelinbunny_1 (Lo
 ADMIN02 - 10.10.14.160                 Log in as: Helen: chase#1 (Local Admin)
 ADMIN01 - 10.10.14.180                 Log in as: Helen: chase#1 (Local Admin)
 FILES01 - 10.10.14.200                 Log in as: Issac: passw0rd!! (Local Admin)
-10. To make a user a local admin, open an elevated PowerShell (using Domain Admin credentials in the UAC prompt), and run the following command
+11. To make a user a local admin, open an elevated PowerShell (using Domain Admin credentials in the UAC prompt), and run the following command
 net localgroup Administrators /add ad\[User]
-11. Then restart the computer. You can now open an elevated PowerShell session, as the user is a member of the Local Administrations group.
+12. Then restart the computer. You can now open an elevated PowerShell session, as the user is a member of the Local Administrations group.
 
 
 Step 4: Set up Attack Boxes using their PowerShell scripts
