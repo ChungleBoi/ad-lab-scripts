@@ -25,7 +25,7 @@ Step 3: Join Member Workstations to the Domain using domain-join.ps1 PowerShell 
 1. Download Windows Server 2025 (https://www.microsoft.com/en-us/evalcenter/download-windows-11-enterprise) and Windows Server 2022: (https://www.microsoft.com/en-us/evalcenter/download-windows-server-2022)
 2. Create a new Virtual Machine in VMWare. Set the encryption password to password123!! (this will allow you to start up the VMs on a different device)
 3. In the Virtual Machine Setup, choose Windows 11 Enterprise as the version (except MAIL01 uses Windows Server 2022). 
-4. In the Virtual Machine Settings, set the memory to 3 GB for FILES01, ADMIN02, ADMIN03, ADMIN04. Set the memory to 4 GB for ADMIN01, WEB01, DMZ01, MAIL01, DC01. Set the memory to 6 GB for WEB02 and DEV01.
+4. In the Virtual Machine Settings, set the memory to 3 GB for FILES01, ADMIN02, ADMIN03, ADMIN04, MAIL01. Set the memory to 4 GB for ADMIN01, WEB01, DMZ01, MAIL01, DC01, KALI. Set the memory to 6 GB for WEB02 and DEV01.
 5. In the Virtual Machine Settings, attach the ISO. Under "Device status", enable "Connect at power on".
 6. Boot and Install Windows 11 Enterprise (all workstations, except MAIL01) / Windows Server 2022 (MAIL01). Set the Username to "LocalUser" and the Password to "password123!!"
 7. Ensure the first network adapter is set to VMNet1 and the second network adapter is set to NAT
