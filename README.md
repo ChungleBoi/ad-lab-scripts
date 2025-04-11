@@ -1,5 +1,5 @@
 This repository provides multiple automation scripts to build a small Active Directory environment for penetration testing practice. 
-Each script corresponds to a specific virtual machine, so you can run exactly what you need—whether it’s a Domain Controller, member server, or workstation. 
+Each script corresponds to a specific virtual machine, so you can run exactly what you need - whether it’s a Domain Controller, member server, or workstation. 
 This way, you can experiment with one machine at a time or create a more complex network.
 
 To get started, clone the repo, place your Windows ISO files in the same directory, and run the scripts in the order that makes sense for your setup. 
