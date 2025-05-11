@@ -335,3 +335,17 @@ if ($currentStep -lt 10) {
     Write-Host "Setup Complete. You may now add a NAT network adapter."
     return
 }
+
+# --------------------------------------------------------------------------------
+# STEP 11: DISABLE WINDOWS FIREWALL
+# --------------------------------------------------------------------------------
+if ($currentStep -lt 11) {
+    Write-Host "`n[Step 11] Disabling Windows Firewall on all profiles (Domain, Private, Public)..."
+
+    Set-NetFirewallProfile -Profile Domain,Public,Private -Enabled False
+
+    Set-Checkpoint 11
+    Write-Host "Step 11 complete. Windows Firewall is now disabled on all profiles."
+    Write-Host "Setup Fully Complete."
+    return
+}
