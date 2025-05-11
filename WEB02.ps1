@@ -221,7 +221,17 @@ Click "OK" to save settings.
 "@) -ForegroundColor Cyan
 Read-Host "Press 'Y' once completed"
 
-# Step 18: Defender exclusion
+# Step 18: Configure IIS Authorization Rules
+Write-Host (@"
+In IIS Manager:
+a. Click "Sites" → "Default Web Site" → "Authorization Rules"
+b. Remove all existing authorization rules
+c. In the right panel, click "Add Allow Rule"
+d. Select "Specified users", enter AD\iis_service, and click OK
+"@) -ForegroundColor Cyan
+Read-Host "Press 'Y' once completed"
+
+# Step 19: Defender exclusion
 try {
     Add-MpPreference -ExclusionPath "C:\Users\Public" -ErrorAction Stop
     Write-Host "Action Needed: Confirm the Windows Defender Exclusion for C:\Users\Public"
@@ -230,5 +240,5 @@ catch {
     Write-Host "Unable to add Windows Defender Exclusion. Give Windows Security (Virus and Threat Protection) some more time to startup. Once it is started, run: Add-MpPreference -ExclusionPath 'C:\Users\Public'" -ForegroundColor Yellow
 }
 
-# Step 19: Log in as Betty, to cache a domain credential
+# Step 20: Log in as Betty, to cache a domain credential
 Write-Host "Script completed successfully. Finally, log in as Betty, to cache a domain credential."
