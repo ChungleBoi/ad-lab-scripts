@@ -224,7 +224,7 @@ Read-Host "Press 'Y' once completed"
 # Step 18: Configure IIS Authorization Rules
 Write-Host (@"
 In IIS Manager:
-a. Click "Sites" → "Default Web Site" → "Authorization Rules"
+a. Click "Sites" -> "Default Web Site" -> "Authorization Rules"
 b. Remove all existing authorization rules
 c. In the right panel, click "Add Allow Rule"
 d. Select "Specified users", enter AD\iis_service, and click OK
