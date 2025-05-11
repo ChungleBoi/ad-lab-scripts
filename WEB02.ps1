@@ -75,11 +75,12 @@ h. On "Database Engine Configuration":
 
 # Step 13: Enable IIS Management Console, ASP, Windows Authentication
 Write-Host (@"
-a. Open 'Run', type 'optionalfeatures'
+a. Open 'Run', execute 'optionalfeatures'
 b. Enable:
   - Internet Information Services -> Web Management Tools -> IIS Management Console
   - Internet Information Services -> World Wide Web Services -> Application Development Features -> ASP
   - Internet Information Services -> World Wide Web Services -> Security -> Windows Authentication
+  - Internet Information Services -> World Wide Web Services -> Security -> URL Authorization
 Click 'OK' to apply changes.
 "@) -ForegroundColor Cyan
 Read-Host "Press 'Y' once completed"
