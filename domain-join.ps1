@@ -39,9 +39,9 @@ $NewIPAddress = Read-Host "Enter the new IP address"
 
 # Set Target OU based on Computer Name (case-insensitive check) –– NEW OU NAMES
 if ($ComputerName.ToUpper() -eq "ADMIN04") {
-    $TargetOU = "OU=DisSMBSig+DisPwdChg+DisDef+EnICMP,DC=AD,DC=LAB"
+    $TargetOU = "OU=DisSMBSig\+DisPwdChg\+DisDef\+EnICMP,DC=AD,DC=LAB"
 } else {
-    $TargetOU = "OU=DisPwdChg+DisDef+EnICMP,DC=AD,DC=LAB"
+    $TargetOU = "OU=DisPwdChg\+DisDef\+EnICMP,DC=AD,DC=LAB"
 }
 
 ### 1) Confirm Tamper Protection Disabled
