@@ -20,6 +20,13 @@
 ###############################################################################
 
 $CheckpointFile = 'C:\DC-Setup-Checkpoint.txt'
+
+# If this is the first run (checkpoint file doesn't exist), prompt the user.
+if (-not (Test-Path $CheckpointFile)) {
+    Read-Host "Ensure you only have one Network Adapter in VMWare (set to VMNet1). Press ENTER to confirm."
+    Read-Host "This script will reboot your device several times. Continue running the script after your computer reboots. When the setup is complete, the script will output 'Setup Complete'. Press ENTER to confirm."
+}
+
 function Set-Checkpoint ($n){ $n | Out-File $CheckpointFile -Force }
 function Get-Checkpoint { if(Test-Path $CheckpointFile){ Get-Content $CheckpointFile } else { 0 } }
 
