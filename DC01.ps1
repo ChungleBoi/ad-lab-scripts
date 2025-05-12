@@ -92,7 +92,7 @@ if ($current -lt 5) {
                      -Name Certificate -Value $cert.Thumbprint
     $k = $cert.PrivateKey.CspKeyContainerInfo.UniqueKeyContainerName
     icacls "$env:ProgramData\Microsoft\Crypto\RSA\MachineKeys\$k*" /grant 'NT AUTHORITY\SYSTEM:R' | Out-Null
-    Export-Certificate $cert -FilePath C:\dc01.cer | Out-Null
+    Export-Certificate -Cert $cert -FilePath C:\dc01.cer | Out-Null
     Import-Certificate -FilePath C:\dc01.cer -CertStoreLocation Cert:\LocalMachine\Root | Out-Null
     Set-Checkpoint 5
     Write-Host 'Step 5 complete - re-run script.'
