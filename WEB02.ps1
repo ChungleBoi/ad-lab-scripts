@@ -55,7 +55,7 @@ h. On "Database Engine Configuration":
    - Under "Specify SQL Server administrators" click "Add Current User" to add iis_service.
    - Click "Next" and "Install" to finish.
 "@) -ForegroundColor Cyan
-    Read-Host "Press 'Y' once completed"
+    Read-Host "Press 'Y' once 'SQL Server 2022 - Developer' is finished installing."
 
     # Step 7: Start SQL Server services
     Set-Service 'MSSQLSERVER' -StartupType Automatic
